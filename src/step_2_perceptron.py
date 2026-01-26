@@ -5,7 +5,7 @@ Tools: Python + NumPy + Matplotlib
 """
 
 import numpy as np
-from plotting import plot_perceptron_boundary
+from plotting import plot_perceptron_boundary, plot_weight_evolution, plot_confusion_matrix_style
 
 # 2.3 Dataset Example (Pass / Fail)
 print("=== 2.3 Dataset Example ===")
@@ -54,6 +54,9 @@ w = 0.0
 b = 0.0
 lr = 0.1  # learning rate
 
+weights_history = []
+biases_history = []
+
 print("Training progress:")
 for epoch in range(10):
     for i in range(len(X)):
@@ -65,8 +68,14 @@ for epoch in range(10):
         w += lr * error * X[i]
         b += lr * error
     
+    weights_history.append(w)
+    biases_history.append(b)
     print(f"Epoch {epoch}: w={w:.2f}, b={b:.2f}")
 print()
+
+# Visualize weight evolution
+print("=== Weight Evolution ===")
+plot_weight_evolution(weights_history, biases_history)
 
 # 2.9 Final Predictions
 print("=== 2.9 Final Predictions ===")
@@ -78,6 +87,11 @@ for x in X:
 print("Final predictions:", final_preds)
 print("Actual values:", y)
 print("Accuracy:", np.mean(np.array(final_preds) == y))
+print()
+
+# Visualize predictions vs actual
+print("=== Predictions Visualization ===")
+plot_confusion_matrix_style(y, np.array(final_preds), class_names=['Fail (0)', 'Pass (1)'])
 print()
 
 # 2.10 Visualize Final Decision Boundary

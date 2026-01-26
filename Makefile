@@ -7,7 +7,7 @@ PYTHON = $(VENV)/bin/python
 PIP = $(VENV)/bin/pip
 SHELL = /bin/bash
 
-.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-6 run-step-7 run-step-7a run-step-7b run-step-7c run-step-7d run-step-8 run-step-8a run-step-8b run-step-8c run-step-8d run-step-8e test check
+.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-6 run-step-7 run-step-7a run-step-7b run-step-7c run-step-7d run-step-8 run-step-8a run-step-8b run-step-8c run-step-8d run-step-8e example-0 example-1 example-2 example-3 example-4 example-5 example-6 test check
 
 # Default target
 help:
@@ -36,6 +36,15 @@ help:
 	@echo "  make run-step-8c      - Run Step 8c: Transfer Learning"
 	@echo "  make run-step-8d      - Run Step 8d: Object Detection (YOLO, R-CNN)"
 	@echo "  make run-step-8e      - Run Step 8e: Image Generation (GANs, VAEs)"
+	@echo ""
+	@echo "Examples (practical neuron usage):"
+	@echo "  make example-0        - Example: Simple neuron (Step 0)"
+	@echo "  make example-1        - Example: Linear regression neuron (Step 1)"
+	@echo "  make example-2        - Example: Perceptron neuron (Step 2)"
+	@echo "  make example-3        - Example: Logistic neuron (Step 3)"
+	@echo "  make example-4        - Example: Multiple neurons (Step 4)"
+	@echo "  make example-5        - Example: Deep network (Step 5)"
+	@echo "  make example-6        - Example: PyTorch neurons (Step 6)"
 	@echo "  make check            - Check Python syntax"
 	@echo "  make test             - Test imports"
 	@echo ""
@@ -150,6 +159,35 @@ run-step-8d: venv
 run-step-8e: venv
 	@echo "Running Step 8e: Image Generation (GANs, VAEs)..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python step_8e_image_generation.py"
+
+# Example files (practical neuron usage)
+example-0: venv
+	@echo "Running Example 0: Simple Neuron..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python example_0_neuron.py"
+
+example-1: venv
+	@echo "Running Example 1: Linear Regression Neuron..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python example_1_neuron.py"
+
+example-2: venv
+	@echo "Running Example 2: Perceptron Neuron..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python example_2_neuron.py"
+
+example-3: venv
+	@echo "Running Example 3: Logistic Regression Neuron..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python example_3_neuron.py"
+
+example-4: venv
+	@echo "Running Example 4: Multiple Neurons..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python example_4_neuron.py"
+
+example-5: venv
+	@echo "Running Example 5: Deep Network..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python example_5_neuron.py"
+
+example-6: venv
+	@echo "Running Example 6: PyTorch Neurons..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python example_6_neuron.py"
 
 # Check Python syntax
 check: venv

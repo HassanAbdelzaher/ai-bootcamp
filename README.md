@@ -132,6 +132,17 @@ python step_1_linear_regression.py
 # ... etc
 ```
 
+**Run practical examples:**
+```bash
+make example-0    # Simple neuron example
+make example-1    # Linear regression neuron
+make example-2    # Perceptron neuron
+make example-3    # Logistic regression neuron
+make example-4    # Multiple neurons
+make example-5    # Deep network
+make example-6    # PyTorch neurons
+```
+
 ---
 
 ## 📁 Project Structure
@@ -267,9 +278,24 @@ make run-step-N    # Run specific step (N = 0-8)
 
 1. **Read the documentation** - Each step has a detailed markdown file in `docs/`
 2. **Run the code** - Execute each step to see it in action
-3. **Experiment** - Modify parameters, try different values
-4. **Understand** - Don't just copy code, understand what it does
-5. **Build** - Use what you learn to create your own projects
+3. **Try the examples** - Run practical examples after each step (`make example-0`, etc.)
+4. **Experiment** - Modify parameters, try different values
+5. **Understand** - Don't just copy code, understand what it does
+6. **Build** - Use what you learn to create your own projects
+
+## 🎯 Practical Examples
+
+After each step, try the corresponding example to see neurons in action:
+
+- **Example 0**: Student grade predictor using simple neuron
+- **Example 1**: Exam score prediction with linear regression
+- **Example 2**: Email spam classifier with perceptron
+- **Example 3**: Disease risk predictor with logistic regression
+- **Example 4**: Credit approval system with multiple neurons
+- **Example 5**: Complex pattern recognition with deep networks
+- **Example 6**: Customer satisfaction classifier with PyTorch
+
+Run examples with: `make example-N` (where N = 0-6)
 
 ---
 

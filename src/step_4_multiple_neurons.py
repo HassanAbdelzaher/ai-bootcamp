@@ -5,7 +5,7 @@ Tools: Python + NumPy + Matplotlib
 """
 
 import numpy as np
-from plotting import plot_neuron_outputs, plot_learning_curve
+from plotting import plot_neuron_outputs, plot_learning_curve, plot_confusion_matrix_style
 
 # 3.3 Dataset Example (Student Features)
 print("=== 4.3 Dataset Example ===")
@@ -144,6 +144,12 @@ print("Final probabilities:\n", final_probs)
 print("Predictions:\n", predictions)
 print("Actual values:\n", y)
 print("Accuracy:", np.mean(predictions == y))
+print()
+
+# Visualize predictions
+print("=== Predictions Visualization ===")
+plot_confusion_matrix_style(y.flatten(), predictions.flatten(), 
+                          class_names=['Fail (0)', 'Pass (1)'])
 print()
 
 # Why This Matters

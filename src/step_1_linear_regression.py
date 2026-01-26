@@ -5,7 +5,7 @@ Tools: Python + NumPy + Matplotlib
 """
 
 import numpy as np
-from plotting import plot_data_scatter, plot_prediction_line, plot_learning_curve
+from plotting import plot_data_scatter, plot_prediction_line, plot_learning_curve, plot_weight_evolution, plot_error_distribution
 
 # 1.3 Dataset Example
 print("=== 1.3 Dataset Example ===")
@@ -45,6 +45,8 @@ b = 0.0
 lr = 0.01  # learning rate
 
 errors = []
+weights_history = []
+biases_history = []
 
 for epoch in range(1000):
     y_pred = w * X + b
@@ -56,6 +58,10 @@ for epoch in range(1000):
     # Update weights and bias
     w -= lr * dw
     b -= lr * db
+    
+    # Store for visualization
+    weights_history.append(w)
+    biases_history.append(b)
     
     # Calculate and store error
     error = np.mean((y_pred - y) ** 2)
@@ -70,12 +76,21 @@ print()
 print("=== 1.9 Learning Curve ===")
 plot_learning_curve(errors, title="Learning Curve", ylabel="Error (MSE)")
 
+# Visualize weight and bias evolution
+print("=== Weight and Bias Evolution ===")
+plot_weight_evolution(weights_history, biases_history, 
+                     title="How Weights and Bias Change During Training")
+
 # 1.10 Final Prediction Line
 print("=== 1.10 Final Prediction Line ===")
 y_pred = w * X + b
 
 plot_prediction_line(X, y, y_pred, xlabel="Study Hours", ylabel="Exam Score",
                     title="Final Learned Model", label_pred="Learned Line", color="green")
+
+# Error distribution
+print("=== Error Analysis ===")
+plot_error_distribution(y, y_pred, title="Prediction Error Distribution")
 print()
 
 # 1.11 Make Predictions
