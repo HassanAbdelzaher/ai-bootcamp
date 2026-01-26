@@ -41,6 +41,22 @@ def sigmoid(z):
     return 1 / (1 + np.exp(-z))
 ```
 
+**Code Explanation:**
+- `import numpy as np`: NumPy for numerical operations
+- `import matplotlib.pyplot as plt`: For plotting visualizations
+- `def sigmoid(z):`: Defines the sigmoid function
+  - Takes a score `z` (can be any number, positive or negative)
+  - Returns a probability (always between 0 and 1)
+- `1 / (1 + np.exp(-z))`: The sigmoid formula
+  - `np.exp(-z)`: Exponential function (e raised to -z power)
+  - `1 + np.exp(-z)`: Add 1 to the exponential
+  - `1 / ...`: Divide 1 by the result
+  - **Why this works:**
+    - When z is large positive: exp(-z) ≈ 0, so result ≈ 1
+    - When z is large negative: exp(-z) ≈ ∞, so result ≈ 0
+    - When z = 0: exp(0) = 1, so result = 0.5
+  - Output is always between 0 and 1 (perfect for probabilities!)
+
 ### Visualize Sigmoid
 
 ```python
@@ -105,6 +121,26 @@ loss = binary_cross_entropy(y, y_pred)
 print("Loss:", loss)
 ```
 
+**Code Explanation:**
+- `def binary_cross_entropy(y, y_pred):`: Defines loss function
+  - `y`: Actual labels (0 or 1)
+  - `y_pred`: Predicted probabilities (0 to 1)
+- `y * np.log(y_pred + 1e-9)`: Loss when actual = 1
+  - If actual = 1: This term contributes to loss
+  - If actual = 0: This term is 0 (multiplied by 0)
+  - `+ 1e-9`: Small number to avoid log(0) = -infinity
+  - `np.log(...)`: Natural logarithm
+- `(1 - y) * np.log(1 - y_pred + 1e-9)`: Loss when actual = 0
+  - If actual = 0: This term contributes to loss
+  - If actual = 1: This term is 0
+- `+`: Add both terms together
+- `np.mean(...)`: Average across all data points
+- `-`: Negate (because we want to maximize log-likelihood, minimize negative)
+- **Intuition:**
+  - Confident & correct → small loss (log of number close to 1)
+  - Confident & wrong → BIG loss (log of number close to 0)
+  - Uncertain (0.5) → medium loss
+
 ---
 
 ## 3.7 Gradient Descent (Learning Probabilities)
@@ -128,6 +164,37 @@ for epoch in range(1000):
     loss = binary_cross_entropy(y, y_pred)
     losses.append(loss)
 ```
+
+**Code Explanation:**
+- **Initialization:**
+  - `lr = 0.1`: Learning rate (step size)
+  - `w = 0.0` and `b = 0.0`: Start with zero weights
+  - `losses = []`: Track loss over time
+
+- **Training Loop:**
+  - `for epoch in range(1000):`: Train for 1000 iterations
+
+- **Forward Pass:**
+  - `z = w * X + b`: Calculate scores (before sigmoid)
+  - `y_pred = sigmoid(z)`: Convert scores to probabilities
+    - Now outputs are between 0 and 1 (not just 0 or 1!)
+
+- **Calculate Gradients:**
+  - `dw = np.mean((y_pred - y) * X)`: Gradient for weight
+    - `(y_pred - y)`: Difference between probability and actual
+    - `* X`: Multiply by input (chain rule)
+    - Same formula as linear regression, but y_pred is now a probability!
+  - `db = np.mean(y_pred - y)`: Gradient for bias
+    - Average of probability differences
+
+- **Update Weights:**
+  - `w -= lr * dw`: Move weight in direction that reduces loss
+  - `b -= lr * db`: Move bias in direction that reduces loss
+  - Same gradient descent as before!
+
+- **Track Loss:**
+  - `loss = binary_cross_entropy(y, y_pred)`: Calculate current loss
+  - `losses.append(loss)`: Save for visualization
 
 ---
 

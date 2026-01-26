@@ -145,6 +145,21 @@ print("Study Hours:", X)
 print("Exam Scores:", y)
 ```
 
+**Code Explanation:**
+- `import numpy as np`: Imports NumPy library (aliased as `np`)
+  - Used for numerical operations and arrays
+- `from plotting import ...`: Imports custom plotting functions
+  - These are visualization helpers we created
+- `X = np.array([1, 2, 3, 4], dtype=float)`: Creates input features array
+  - `[1, 2, 3, 4]`: Study hours for 4 students
+  - `dtype=float`: Ensures decimal numbers (needed for calculations)
+  - `X` is the standard name for input features in ML
+- `y = np.array([50, 60, 70, 80], dtype=float)`: Creates target values array
+  - `[50, 60, 70, 80]`: Actual exam scores (the "correct answers")
+  - `y` is the standard name for target/output values in ML
+  - Notice the pattern: each hour adds 10 points (perfect linear relationship)
+- `print(...)`: Displays the arrays to verify they're correct
+
 **Output:**
 ```
 Study Hours: [1. 2. 3. 4.]
@@ -406,6 +421,52 @@ print(f"Final b (bias): {b:.4f}")
 print(f"Final error: {errors[-1]:.4f}")
 ```
 
+**Code Explanation:**
+- **Initialization:**
+  - `w = 0.0` and `b = 0.0`: Start with zero weights (no knowledge yet)
+  - `lr = 0.01`: Learning rate controls step size (0.01 = small, careful steps)
+  - `errors = []`: List to track error over time (for plotting)
+  - `weights_history = []`: List to track weight changes (for visualization)
+  - `biases_history = []`: List to track bias changes (for visualization)
+
+- **Training Loop (`for epoch in range(1000):`):**
+  - `epoch`: One complete pass through all training data
+  - `range(1000)`: Train for 1000 epochs (iterations)
+  - More epochs = more learning (but diminishing returns)
+
+- **Forward Pass (`y_pred = w * X + b`):**
+  - Makes predictions using current weights
+  - `w * X`: Multiply each hour by weight (vectorized operation)
+  - `+ b`: Add bias to each prediction
+  - Result: Array of predicted scores
+
+- **Calculate Gradients:**
+  - `dw = np.mean((y_pred - y) * X)`: Gradient for weight
+    - `(y_pred - y)`: Prediction errors
+    - `* X`: Multiply by input (chain rule from calculus)
+    - `np.mean(...)`: Average across all data points
+    - Tells us: "If we increase w, how much will error change?"
+  - `db = np.mean(y_pred - y)`: Gradient for bias
+    - Simpler: just average the errors
+    - Tells us: "If we increase b, how much will error change?"
+
+- **Update Weights (`w -= lr * dw`):**
+  - `-=` means: `w = w - lr * dw`
+  - Move in OPPOSITE direction of gradient (to reduce error)
+  - If gradient is positive → error increases when w increases → decrease w
+  - If gradient is negative → error decreases when w increases → increase w
+  - `lr` controls how big the step is
+
+- **Store Values:**
+  - `weights_history.append(w)`: Save current weight
+  - `biases_history.append(b)`: Save current bias
+  - `errors.append(error)`: Save current error
+  - Used later for visualization
+
+- **Final Print:**
+  - `{w:.4f}`: Format to 4 decimal places
+  - Shows the learned values after training
+
 **Expected Output:**
 ```
 Final w (weight): 10.0000
@@ -555,6 +616,20 @@ predicted_score = w * study_hours + b
 print(f"Predicted score for {study_hours} hours: {predicted_score:.2f}")
 ```
 
+**Code Explanation:**
+- `study_hours = 5`: New input (student we haven't seen before)
+  - This tests if the model can generalize to new data
+  - Not in the training set!
+- `predicted_score = w * study_hours + b`: Use learned model
+  - `w`: Learned weight (should be ~10)
+  - `study_hours`: Input (5 hours)
+  - `b`: Learned bias (should be ~40)
+  - Calculation: `10 × 5 + 40 = 90`
+- `print(f"...")`: Display prediction
+  - `f"..."` is an f-string (formatted string)
+  - `{study_hours}` inserts the variable value
+  - `{predicted_score:.2f}` formats to 2 decimal places
+
 **Output:**
 ```
 Predicted score for 5 hours: 90.00
@@ -571,6 +646,19 @@ for hours in test_hours:
     score = w * hours + b
     print(f"Study {hours:2d} hours → Predicted score: {score:.2f}")
 ```
+
+**Code Explanation:**
+- `test_hours = [6, 8, 10]`: List of hours to test
+  - Multiple new students with different study hours
+- `print("-" * 40)`: Print 40 dashes (creates a separator line)
+- `for hours in test_hours:`: Loop through each test value
+  - `hours` takes each value: 6, then 8, then 10
+- `score = w * hours + b`: Calculate prediction for each
+  - Same formula, different input each time
+- `print(f"Study {hours:2d} hours → ...")`: Format output
+  - `{hours:2d}`: Format as integer with 2-digit width (pads with space)
+  - `{score:.2f}`: Format as float with 2 decimal places
+  - `→` is an arrow character for readability
 
 **Output:**
 ```

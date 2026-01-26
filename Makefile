@@ -7,7 +7,7 @@ PYTHON = $(VENV)/bin/python
 PIP = $(VENV)/bin/pip
 SHELL = /bin/bash
 
-.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-6 run-step-7 run-step-7a run-step-7b run-step-7c run-step-7d run-step-8 run-step-8a run-step-8b run-step-8c run-step-8d run-step-8e example-0 example-1 example-2 example-3 example-4 example-5 example-6 test check
+.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-6 run-step-7 run-step-7a run-step-7b run-step-7c run-step-7d run-step-8 run-step-8a run-step-8b run-step-8c run-step-8d run-step-8e example-0 example-1 example-2 example-3 example-4 example-5 example-6 example-vg test check
 
 # Default target
 help:
@@ -45,6 +45,7 @@ help:
 	@echo "  make example-4        - Example: Multiple neurons (Step 4)"
 	@echo "  make example-5        - Example: Deep network (Step 5)"
 	@echo "  make example-6        - Example: PyTorch neurons (Step 6)"
+	@echo "  make example-vg       - Example: Vanishing Gradient visualization"
 	@echo "  make check            - Check Python syntax"
 	@echo "  make test             - Test imports"
 	@echo ""
@@ -188,6 +189,10 @@ example-5: venv
 example-6: venv
 	@echo "Running Example 6: PyTorch Neurons..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python example_6_neuron.py"
+
+example-vg: venv
+	@echo "Running Example: Vanishing Gradient Visualization..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python example_vanishing_gradient.py"
 
 # Check Python syntax
 check: venv

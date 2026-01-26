@@ -114,6 +114,21 @@ lr = 0.1
 losses = []
 ```
 
+**Code Explanation:**
+- `W1 = np.random.randn(2, 4)`: First layer weights (input → hidden)
+  - Shape `(2, 4)`: 2 input features → 4 hidden neurons
+  - Random initialization (will be learned)
+- `b1 = np.zeros((1, 4))`: First layer biases
+  - Shape `(1, 4)`: One bias per hidden neuron (4 biases)
+- `W2 = np.random.randn(4, 1)`: Second layer weights (hidden → output)
+  - Shape `(4, 1)`: 4 hidden neurons → 1 output neuron
+  - Combines hidden layer outputs
+- `b2 = np.zeros((1, 1))`: Second layer bias
+  - Shape `(1, 1)`: Single bias for output neuron
+- `lr = 0.1`: Learning rate for gradient descent
+- `losses = []`: Track loss during training
+- **Architecture:** Input(2) → Hidden(4) → Output(1)
+
 ---
 
 ## 5.7 Forward Pass

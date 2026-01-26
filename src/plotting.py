@@ -590,3 +590,139 @@ def plot_error_distribution(y_true, y_pred, title="Error Distribution"):
     
     plt.tight_layout()
     plt.show()
+
+
+def plot_vanishing_gradient(gradients_by_layer, layer_names=None, title="Vanishing Gradient Problem"):
+    """
+    Visualize how gradients diminish through layers (vanishing gradient problem)
+    
+    Parameters:
+    gradients_by_layer: list of gradient values for each layer (from output to input)
+    layer_names: optional list of layer names
+    title: plot title
+    """
+    if layer_names is None:
+        layer_names = [f"Layer {i+1}" for i in range(len(gradients_by_layer))]
+    
+    # Reverse to show from input to output
+    gradients = gradients_by_layer[::-1]
+    layer_names = layer_names[::-1]
+    
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+    
+    # Plot 1: Bar chart showing gradient magnitudes
+    colors = plt.cm.RdYlGn_r(np.linspace(0.2, 0.8, len(gradients)))
+    bars = ax1.barh(layer_names, gradients, color=colors, alpha=0.7, edgecolor='black', linewidth=1.5)
+    
+    # Add value labels
+    for i, (bar, grad) in enumerate(zip(bars, gradients)):
+        width = bar.get_width()
+        ax1.text(width, bar.get_y() + bar.get_height()/2,
+                f'{grad:.6f}', ha='left' if width > max(gradients) * 0.1 else 'right',
+                va='center', fontsize=9, fontweight='bold')
+    
+    ax1.set_xlabel("Gradient Magnitude", fontsize=12, fontweight='bold')
+    ax1.set_ylabel("Layer (Input → Output)", fontsize=12, fontweight='bold')
+    ax1.set_title("Gradient Magnitude by Layer", fontsize=13, fontweight='bold', pad=15)
+    ax1.grid(True, alpha=0.3, linestyle='--', axis='x')
+    ax1.set_xscale('log')  # Log scale to better show the difference
+    
+    # Add warning annotation for vanishing gradients
+    if gradients[0] / gradients[-1] > 100:
+        ax1.text(0.5, 0.95, '⚠️ Vanishing Gradient Detected!', 
+                transform=ax1.transAxes, fontsize=12, fontweight='bold',
+                ha='center', va='top',
+                bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.8))
+    
+    # Plot 2: Line plot showing exponential decay
+    ax2.plot(range(len(gradients)), gradients, marker='o', linewidth=3, 
+            markersize=10, color='steelblue', label='Gradient Magnitude')
+    ax2.fill_between(range(len(gradients)), gradients, alpha=0.3, color='steelblue')
+    
+    # Add exponential decay curve for comparison
+    if len(gradients) > 1:
+        # Fit exponential decay
+        x_fit = np.arange(len(gradients))
+        # Simple exponential: y = a * exp(-b*x)
+        try:
+            from scipy.optimize import curve_fit
+            def exp_decay(x, a, b):
+                return a * np.exp(-b * x)
+            popt, _ = curve_fit(exp_decay, x_fit, gradients, p0=[gradients[0], 0.5])
+            y_fit = exp_decay(x_fit, *popt)
+            ax2.plot(x_fit, y_fit, 'r--', linewidth=2, alpha=0.7, 
+                    label=f'Exponential Decay (rate={popt[1]:.2f})')
+        except:
+            # If scipy not available, just show the data
+            pass
+    
+    ax2.set_xlabel("Layer Number (Input → Output)", fontsize=12, fontweight='bold')
+    ax2.set_ylabel("Gradient Magnitude", fontsize=12, fontweight='bold')
+    ax2.set_title("Gradient Decay Through Layers", fontsize=13, fontweight='bold', pad=15)
+    ax2.set_yscale('log')
+    ax2.grid(True, alpha=0.3, linestyle='--')
+    ax2.legend(fontsize=10)
+    ax2.set_xticks(range(len(gradients)))
+    ax2.set_xticklabels([f'L{i+1}' for i in range(len(gradients))])
+    
+    # Add ratio annotation
+    if len(gradients) > 1:
+        ratio = gradients[0] / gradients[-1]
+        ax2.text(0.02, 0.98, f'Input/Output Ratio: {ratio:.1e}x', 
+                transform=ax2.transAxes, fontsize=11, fontweight='bold',
+                verticalalignment='top',
+                bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.7))
+    
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_gradient_flow(gradients_history, layer_idx=0, title="Gradient Flow Over Time"):
+    """
+    Plot how gradients change during training for a specific layer
+    
+    Parameters:
+    gradients_history: list of gradient values over epochs for a layer
+    layer_idx: which layer to visualize
+    title: plot title
+    """
+    if not gradients_history:
+        return
+    
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8))
+    
+    epochs = np.arange(len(gradients_history))
+    
+    # Plot 1: Gradient magnitude over time
+    ax1.plot(epochs, gradients_history, linewidth=2, color='steelblue', label='Gradient Magnitude')
+    ax1.fill_between(epochs, gradients_history, alpha=0.3, color='steelblue')
+    ax1.axhline(0, color='red', linestyle='--', linewidth=1, alpha=0.5, label='Zero')
+    
+    # Add vanishing threshold
+    threshold = 1e-6
+    ax1.axhline(threshold, color='orange', linestyle='--', linewidth=1, 
+               alpha=0.7, label=f'Vanishing Threshold ({threshold})')
+    
+    ax1.set_xlabel("Epoch", fontsize=12, fontweight='bold')
+    ax1.set_ylabel("Gradient Magnitude", fontsize=12, fontweight='bold')
+    ax1.set_title(f"{title} - Layer {layer_idx+1}", fontsize=13, fontweight='bold', pad=15)
+    ax1.set_yscale('log')
+    ax1.grid(True, alpha=0.3, linestyle='--')
+    ax1.legend(fontsize=10)
+    
+    # Plot 2: Gradient change rate
+    if len(gradients_history) > 1:
+        gradient_changes = np.diff(gradients_history)
+        ax2.plot(epochs[1:], gradient_changes, linewidth=2, color='coral', 
+                label='Gradient Change')
+        ax2.axhline(0, color='red', linestyle='--', linewidth=1, alpha=0.5)
+        ax2.fill_between(epochs[1:], gradient_changes, alpha=0.3, color='coral')
+        
+        ax2.set_xlabel("Epoch", fontsize=12, fontweight='bold')
+        ax2.set_ylabel("Gradient Change", fontsize=12, fontweight='bold')
+        ax2.set_title("Gradient Change Rate", fontsize=13, fontweight='bold', pad=15)
+        ax2.grid(True, alpha=0.3, linestyle='--')
+        ax2.legend(fontsize=10)
+    
+    plt.tight_layout()
+    plt.show()

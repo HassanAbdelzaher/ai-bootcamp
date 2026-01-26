@@ -98,14 +98,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 ```
 
+**Code Explanation:**
+- `import numpy as np`: Imports the NumPy library and gives it the alias `np`
+  - This allows us to use `np.array()` instead of `numpy.array()`
+  - NumPy provides fast numerical operations and array handling
+- `import matplotlib.pyplot as plt`: Imports the plotting module
+  - `plt` is the standard alias for matplotlib's plotting functions
+  - Used for creating graphs and visualizations
+
 **Why NumPy?**
-- Fast mathematical operations
+- Fast mathematical operations (optimized C code under the hood)
 - Handles arrays and matrices efficiently
-- Essential for AI/ML work
+- Essential for AI/ML work (all frameworks use NumPy arrays)
+- Vectorized operations (apply operations to entire arrays at once)
 
 **Why Matplotlib?**
-- Creates visualizations
-- Helps understand what's happening
+- Creates visualizations to understand data and results
+- Helps understand what's happening visually
 - Makes learning visual and intuitive
 
 ---
@@ -174,6 +183,19 @@ print("Student vector:", x)
 print("Type:", type(x))
 print("Shape:", x.shape)
 ```
+
+**Code Explanation:**
+- `np.array([80, 70, 75])`: Creates a NumPy array from a Python list
+  - `[80, 70, 75]` is a Python list with three numbers
+  - `np.array()` converts it to a NumPy array for efficient operations
+  - The numbers represent: Math=80, Science=70, English=75
+- `print("Student vector:", x)`: Displays the array
+  - Shows all values in the vector
+- `type(x)`: Returns the data type
+  - `<class 'numpy.ndarray'>` means it's a NumPy array (not a regular list)
+- `x.shape`: Returns the dimensions
+  - `(3,)` means it's a 1D array with 3 elements
+  - The comma indicates it's a tuple representing shape
 
 **Output:**
 ```
@@ -306,6 +328,17 @@ print("Manual calculation:", result)
 z = np.dot(x, w)
 print("NumPy dot product:", z)
 ```
+
+**Code Explanation:**
+- `np.dot(x, w)`: Calculates the dot product of two arrays
+  - `x` is the input vector `[80, 70, 75]`
+  - `w` is the weight vector `[0.6, 0.3, 0.1]`
+  - NumPy automatically multiplies corresponding elements and sums them
+  - Equivalent to: `(80×0.6) + (70×0.3) + (75×0.1) = 48 + 21 + 7.5 = 76.5`
+- Alternative syntax: `z = x @ w` (matrix multiplication operator)
+  - Both `np.dot(x, w)` and `x @ w` produce the same result
+  - `@` is the modern Python syntax for matrix multiplication
+- `print("NumPy dot product:", z)`: Displays the result
 
 **Output:**
 ```
@@ -452,6 +485,22 @@ result = neuron(x, w, b)
 print(f"Neuron output: {result}")
 ```
 
+**Code Explanation:**
+- `def neuron(x, w, b):`: Defines a function called `neuron`
+  - Takes three parameters: input features `x`, weights `w`, and bias `b`
+  - This is a reusable function we can call multiple times
+- `return np.dot(x, w) + b`: The function's return statement
+  - `np.dot(x, w)`: Calculates weighted sum (dot product)
+  - `+ b`: Adds the bias to adjust the final score
+  - Returns the final calculated score
+- Function call: `neuron(x, w, b)`
+  - `x = np.array([80, 70, 75])`: Student's scores (input features)
+  - `w = np.array([0.6, 0.3, 0.1])`: Weights (importance of each subject)
+  - `b = -50`: Bias (threshold adjustment)
+  - The function calculates: `(80×0.6 + 70×0.3 + 75×0.1) - 50 = 76.5 - 50 = 26.5`
+- `print(f"Neuron output: {result}")`: Displays the result
+  - `f"..."` is an f-string (formatted string) that inserts the variable value
+
 **Output:**
 ```
 Neuron output: 26.5
@@ -590,6 +639,34 @@ print(f"\nScores for all students:")
 for i, score in enumerate(scores):
     print(f"  Student {i+1}: {score:.1f}")
 ```
+
+**Code Explanation:**
+- `X = np.array([[...]])`: Creates a 2D matrix (4 rows × 3 columns)
+  - Each row represents one student's scores
+  - Shape: `(4, 3)` = 4 students, 3 features each
+  - This is much more efficient than processing students one by one
+- `w = np.array([0.6, 0.3, 0.1])`: Weight vector (1D array)
+  - Same weights applied to all students
+  - Shape: `(3,)` = 3 weights for 3 features
+- `X @ w`: Matrix multiplication (dot product for each row)
+  - `@` is the matrix multiplication operator
+  - For each row in X, calculates: `row · w`
+  - Result: 1D array with 4 scores (one per student)
+  - This is equivalent to:
+    ```python
+    scores = []
+    for student in X:
+        score = np.dot(student, w) + b
+        scores.append(score)
+    ```
+  - But matrix multiplication is MUCH faster!
+- `+ b`: Broadcasting - adds bias to each score
+  - NumPy automatically adds `b` to every element in the result
+  - No loop needed!
+- `for i, score in enumerate(scores):`: Iterates through scores
+  - `enumerate()` gives both index `i` and value `score`
+  - `i` starts at 0, so `i+1` gives student number (1, 2, 3, 4)
+  - `{score:.1f}` formats the number to 1 decimal place
 
 **Output:**
 ```
