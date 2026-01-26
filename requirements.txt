@@ -1,0 +1,16 @@
+# AI Codecamp Requirements
+# Core dependencies for all steps
+
+# Numerical computing
+# Note: NumPy version should be compatible with PyTorch
+# PyTorch 1.9+ works with NumPy 1.19-1.24
+numpy>=1.21.0,<2.0.0
+
+# Plotting and visualization
+matplotlib>=3.4.0
+
+# Deep learning framework (for Step 6)
+# PyTorch will automatically install compatible NumPy if needed
+torch>=1.9.0
+torchvision>=0.10.0
+torchaudio>=0.9.0
