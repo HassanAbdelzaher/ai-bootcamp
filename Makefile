@@ -7,7 +7,7 @@ PYTHON = $(VENV)/bin/python
 PIP = $(VENV)/bin/pip
 SHELL = /bin/bash
 
-.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-6 run-step-7 run-step-7a run-step-7b run-step-7c run-step-7d run-step-8 run-step-8a run-step-8b run-step-8c run-step-8d run-step-8e example-0 example-1 example-2 example-3 example-4 example-5 example-6 example-vg test check
+.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-6 run-step-7 run-step-7a run-step-7b run-step-7c run-step-7d run-step-8 run-step-8a run-step-8b run-step-8c run-step-8d run-step-8e example-0 example-1 example-2 example-3 example-4 example-5 example-6 example-vg project-1 project-2 test check
 
 # Default target
 help:
@@ -46,7 +46,11 @@ help:
 	@echo "  make example-5        - Example: Deep network (Step 5)"
 	@echo "  make example-6        - Example: PyTorch neurons (Step 6)"
 	@echo "  make example-vg       - Example: Vanishing Gradient visualization"
-	@echo "  make check            - Check Python syntax"
+	@echo ""
+	@echo "Projects (practical applications):"
+	@echo "  make project-1         - Run Project 1: Simple Predictor"
+	@echo "  make project-2         - Run Project 2: Multi-Class Classifier"
+	@echo "  make check             - Check Python syntax"
 	@echo "  make test             - Test imports"
 	@echo ""
 	@echo "Note: All commands automatically use the virtual environment."
@@ -193,6 +197,15 @@ example-6: venv
 example-vg: venv
 	@echo "Running Example: Vanishing Gradient Visualization..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python example_vanishing_gradient.py"
+
+# Projects
+project-1: venv
+	@echo "Running Project 1: Simple Predictor..."
+	@bash -c "source $(VENV)/bin/activate && cd projects/project_1_simple_predictor && python house_price_predictor.py && python spam_classifier.py"
+
+project-2: venv
+	@echo "Running Project 2: Multi-Class Classifier..."
+	@bash -c "source $(VENV)/bin/activate && cd projects/project_2_classifier && python digit_classifier.py"
 
 # Check Python syntax
 check: venv
