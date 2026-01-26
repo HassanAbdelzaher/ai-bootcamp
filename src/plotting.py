@@ -462,7 +462,7 @@ def plot_decision_regions(xx, yy, Z, X, y, title="XOR Decision Regions (Deep Net
     # Decision boundary (0.5 probability)
     cs = ax.contour(xx, yy, Z, levels=[0.5], colors='blue', 
                    linewidths=3, linestyles='--', zorder=4)
-    ax.clabel(cs, inline=True, fontsize=12, fontweight='bold', fmt='Decision Boundary')
+    ax.clabel(cs, inline=True, fontsize=12, fmt='Decision Boundary')
     
     ax.set_xlabel("x1", fontsize=13, fontweight='bold')
     ax.set_ylabel("x2", fontsize=13, fontweight='bold')
