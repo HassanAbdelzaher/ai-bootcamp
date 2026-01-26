@@ -27,6 +27,16 @@ This bootcamp takes you from zero to building neural networks using PyTorch. Eac
 - **Step 5**: Hidden layers and solving XOR problem
 - **Step 6**: PyTorch framework and professional AI development
 - **Step 7**: RNNs (Recurrent Neural Networks) for sequences and text
+  - **Step 7a**: Text Generator (character-level RNN)
+  - **Step 7b**: Stock Price Prediction (time series)
+  - **Step 7c**: LSTM and GRU (advanced RNNs)
+  - **Step 7d**: Transformers (BERT, GPT)
+- **Step 8**: CNNs (Convolutional Neural Networks) for images
+  - **Step 8a**: Real Datasets (CIFAR-10, ImageNet)
+  - **Step 8b**: Image Classifiers
+  - **Step 8c**: Transfer Learning
+  - **Step 8d**: Object Detection (YOLO, R-CNN)
+  - **Step 8e**: Image Generation (GANs, VAEs)
 
 ---
 
@@ -102,6 +112,16 @@ make run-step-4    # Multiple Neurons
 make run-step-5    # XOR and Hidden Layers
 make run-step-6    # PyTorch
 make run-step-7    # RNNs (Sequences)
+make run-step-7a   # Text Generator
+make run-step-7b   # Stock Price Prediction
+make run-step-7c   # LSTM and GRU
+make run-step-7d   # Transformers (BERT, GPT)
+make run-step-8    # CNNs (Images)
+make run-step-8a   # Real Datasets (CIFAR-10)
+make run-step-8b   # Image Classifiers
+make run-step-8c   # Transfer Learning
+make run-step-8d   # Object Detection (YOLO, R-CNN)
+make run-step-8e   # Image Generation (GANs, VAEs)
 ```
 
 **Or run directly:**
@@ -184,6 +204,24 @@ ai-codecamp/
 **Concepts**: RNN architecture, sequence processing, hidden states, text generation  
 **Time**: ~60 minutes
 
+**Extended Topics:**
+- **Step 7a**: Text Generator - Build character-level text generator
+- **Step 7b**: Stock Prices - Predict time series data
+- **Step 7c**: LSTM & GRU - Advanced RNN architectures
+- **Step 7d**: Transformers - BERT, GPT, and attention mechanism
+
+### Step 8: CNNs (Convolutional Neural Networks)
+**Goal**: Process images using CNNs  
+**Concepts**: Convolution, pooling, feature detection, image classification  
+**Time**: ~60 minutes
+
+**Extended Topics:**
+- **Step 8a**: Real Datasets - Train on CIFAR-10 and ImageNet
+- **Step 8b**: Image Classifiers - Build improved classification models
+- **Step 8c**: Transfer Learning - Use pre-trained models
+- **Step 8d**: Object Detection - YOLO and R-CNN algorithms
+- **Step 8e**: Image Generation - GANs and VAEs for creating images
+
 ---
 
 ## 🛠 Available Commands
@@ -197,7 +235,7 @@ make clean         # Remove Python cache files and venv
 make check         # Check Python syntax
 make test          # Test imports
 make run-all       # Run all steps
-make run-step-N    # Run specific step (N = 0-7)
+make run-step-N    # Run specific step (N = 0-8)
 ```
 
 **Note**: All commands automatically use the virtual environment. No need to manually activate it when using Make commands.

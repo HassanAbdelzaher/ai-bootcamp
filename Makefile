@@ -7,7 +7,7 @@ PYTHON = $(VENV)/bin/python
 PIP = $(VENV)/bin/pip
 SHELL = /bin/bash
 
-.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-6 run-step-7 test check
+.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-6 run-step-7 run-step-7a run-step-7b run-step-7c run-step-7d run-step-8 run-step-8a run-step-8b run-step-8c run-step-8d run-step-8e test check
 
 # Default target
 help:
@@ -26,6 +26,16 @@ help:
 	@echo "  make run-step-5       - Run Step 5: XOR and Hidden Layers"
 	@echo "  make run-step-6       - Run Step 6: PyTorch"
 	@echo "  make run-step-7       - Run Step 7: RNNs (Sequences)"
+	@echo "  make run-step-7a      - Run Step 7a: Text Generator"
+	@echo "  make run-step-7b      - Run Step 7b: Stock Price Prediction"
+	@echo "  make run-step-7c      - Run Step 7c: LSTM and GRU"
+	@echo "  make run-step-7d      - Run Step 7d: Transformers (BERT, GPT)"
+	@echo "  make run-step-8       - Run Step 8: CNNs (Images)"
+	@echo "  make run-step-8a      - Run Step 8a: Real Datasets (CIFAR-10)"
+	@echo "  make run-step-8b      - Run Step 8b: Image Classifiers"
+	@echo "  make run-step-8c      - Run Step 8c: Transfer Learning"
+	@echo "  make run-step-8d      - Run Step 8d: Object Detection (YOLO, R-CNN)"
+	@echo "  make run-step-8e      - Run Step 8e: Image Generation (GANs, VAEs)"
 	@echo "  make check            - Check Python syntax"
 	@echo "  make test             - Test imports"
 	@echo ""
@@ -66,7 +76,7 @@ clean:
 	@echo "Cleaned Python cache files and virtual environment"
 
 # Run all steps
-run-all: run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-6 run-step-7
+run-all: run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-6 run-step-7 run-step-8
 
 # Run individual steps
 run-step-0: venv
@@ -100,6 +110,46 @@ run-step-6: venv
 run-step-7: venv
 	@echo "Running Step 7: RNNs (Sequences)..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python step_7_rnns.py"
+
+run-step-7a: venv
+	@echo "Running Step 7a: Text Generator..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_7a_text_generator.py"
+
+run-step-7b: venv
+	@echo "Running Step 7b: Stock Price Prediction..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_7b_stock_prices.py"
+
+run-step-7c: venv
+	@echo "Running Step 7c: LSTM and GRU..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_7c_lstm_gru.py"
+
+run-step-7d: venv
+	@echo "Running Step 7d: Transformers (BERT, GPT)..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_7d_transformers.py"
+
+run-step-8: venv
+	@echo "Running Step 8: CNNs (Images)..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_8_cnns.py"
+
+run-step-8a: venv
+	@echo "Running Step 8a: Real Datasets (CIFAR-10)..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_8a_real_datasets.py"
+
+run-step-8b: venv
+	@echo "Running Step 8b: Image Classifiers..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_8b_image_classifiers.py"
+
+run-step-8c: venv
+	@echo "Running Step 8c: Transfer Learning..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_8c_transfer_learning.py"
+
+run-step-8d: venv
+	@echo "Running Step 8d: Object Detection (YOLO, R-CNN)..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_8d_object_detection.py"
+
+run-step-8e: venv
+	@echo "Running Step 8e: Image Generation (GANs, VAEs)..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_8e_image_generation.py"
 
 # Check Python syntax
 check: venv
