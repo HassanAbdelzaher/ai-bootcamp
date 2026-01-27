@@ -44,6 +44,10 @@ By the end of this bootcamp, you'll be able to:
 
 ## 🗺️ Learning Roadmap
 
+> **📖 For a detailed roadmap with timelines, milestones, and progress tracking, see [BOOTCAMP_ROADMAP.md](docs/BOOTCAMP_ROADMAP.md)**
+
+## 🗺️ Learning Roadmap (Quick Overview)
+
 ### **Phase 1: Foundations (Steps 0-2)**
 *Build the mathematical and conceptual foundation*
 

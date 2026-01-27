@@ -7,7 +7,7 @@ PYTHON = $(VENV)/bin/python
 PIP = $(VENV)/bin/pip
 SHELL = /bin/bash
 
-.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-3c run-step-4 run-step-5 run-step-5b run-step-6 run-step-6b run-step-6c run-step-7 run-step-7a run-step-7b run-step-7b-adv run-step-7c run-step-7d run-step-7e run-step-8 run-step-8a run-step-8b run-step-8c run-step-8d run-step-8e run-step-8f run-step-11 example-vg project-1 project-2 test check
+.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-3c run-step-4 run-step-5 run-step-5b run-step-6 run-step-6b run-step-6c run-step-7 run-step-7a run-step-7b run-step-7b-adv run-step-7c run-step-7d run-step-7e run-step-8 run-step-8a run-step-8b run-step-8c run-step-8d run-step-8e run-step-8f run-step-11 run-step-12 run-step-13 example-vg project-1 project-2 test check
 
 # Default target
 help:
@@ -44,6 +44,8 @@ help:
 	@echo "  make run-step-8e      - Run Step 8e: Image Generation (GANs, VAEs)"
 	@echo "  make run-step-8f      - Run Step 8f: Advanced Vision Tasks"
 	@echo "  make run-step-11      - Run Step 11: Reinforcement Learning Basics"
+	@echo "  make run-step-12      - Run Step 12: AI Ethics and Responsible AI"
+	@echo "  make run-step-13      - Run Step 13: Graph Neural Networks"
 	@echo ""
 	@echo "Examples (practical neuron usage):"
 	@echo "  make example-0        - Example: Simple neuron (Step 0)"
@@ -98,7 +100,7 @@ clean:
 	@echo "Cleaned Python cache files and virtual environment"
 
 # Run all steps
-run-all: run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-6 run-step-7 run-step-8
+run-all: run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-6 run-step-7 run-step-8 run-step-11 run-step-12 run-step-13
 
 # Run individual steps
 run-step-0: venv
@@ -204,6 +206,14 @@ run-step-8f: venv
 run-step-11: venv
 	@echo "Running Step 11: Reinforcement Learning Basics..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python step_11_reinforcement_learning.py"
+
+run-step-12: venv
+	@echo "Running Step 12: AI Ethics and Responsible AI..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_12_ai_ethics.py"
+
+run-step-13: venv
+	@echo "Running Step 13: Graph Neural Networks..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_13_graph_neural_networks.py"
 
 # Example files (practical neuron usage)
 example-0: venv
