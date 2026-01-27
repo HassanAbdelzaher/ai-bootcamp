@@ -39,6 +39,8 @@ Build a simple prediction system that can:
 - Making predictions
 - Evaluation metrics
 
+**📖 [View Detailed Documentation →](project_1_simple_predictor/README.md)**
+
 ---
 
 ### Project 2: Multi-Class Classifier
@@ -56,6 +58,8 @@ Build a neural network that can classify data into multiple categories:
 - Multi-class classification
 - Confusion matrices
 - Model evaluation
+
+**📖 [View Detailed Documentation →](project_2_classifier/README.md)**
 
 ---
 
@@ -75,6 +79,8 @@ Create a text analysis system:
 - RNN architectures
 - Sequence processing
 
+**📖 [View Detailed Documentation →](project_3_text_analyzer/README.md)**
+
 ---
 
 ### Project 4: Image Classifier
@@ -92,6 +98,8 @@ Build an image classification system:
 - CNN architecture design
 - Transfer learning
 - Data augmentation
+
+**📖 [View Detailed Documentation →](project_4_image_classifier/README.md)**
 
 ---
 
@@ -111,6 +119,8 @@ Create a time series prediction system:
 - Sequence prediction
 - Handling temporal data
 
+**📖 [View Detailed Documentation →](project_5_time_series/README.md)**
+
 ---
 
 ### Project 6: Complete Application
@@ -129,6 +139,8 @@ Build a complete AI application combining multiple concepts:
 - Integration
 - Deployment
 - Full-stack AI application
+
+**📖 [View Detailed Documentation →](project_6_complete_app/README.md)**
 
 ---
 
@@ -204,11 +216,25 @@ By completing these projects, you'll:
 ## 📚 Additional Resources
 
 Each project includes:
-- Detailed README with instructions
-- Starter code (if applicable)
-- Example solutions
-- Extension ideas
-- Further reading
+- **Comprehensive README** with step-by-step guides
+- **Code examples** with detailed explanations
+- **Expected results** and outputs
+- **Troubleshooting guides** for common issues
+- **Extension ideas** for further learning
+- **Key concepts** review sections
+
+### Documentation Structure
+
+Each project README contains:
+1. **Project Overview** - Goals and learning objectives
+2. **Problem Description** - Detailed task breakdown
+3. **Key Concepts** - Important theory explained
+4. **Step-by-Step Guide** - Implementation walkthrough
+5. **Code Examples** - Annotated code snippets
+6. **Expected Results** - What to expect
+7. **Extension Ideas** - Ways to expand the project
+8. **Troubleshooting** - Common issues and solutions
+9. **Learning Outcomes** - Skills you'll gain
 
 ---
 
