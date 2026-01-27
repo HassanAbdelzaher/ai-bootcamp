@@ -22,7 +22,8 @@
 11. [Making Predictions](#111-make-predictions)
 12. [Weight Evolution](#112-weight-evolution-visualization)
 13. [Error Analysis](#113-error-analysis)
-14. [Exercises](#114-mini-exercises)
+14. [Train/Test Split](#114-traintest-split-important-practice)
+15. [Exercises](#115-mini-exercises)
 
 ---
 
@@ -757,7 +758,137 @@ The error analysis visualization shows two plots:
 
 ---
 
-## 1.14 Mini Exercises
+## 1.14 Train/Test Split (Important Practice)
+
+### Why Split Data?
+
+In real projects, we **split data into training and testing sets**. This helps us evaluate how well our model generalizes to new data.
+
+**Key reasons:**
+- **Training set**: Used to learn the model
+- **Test set**: Used to evaluate performance on unseen data
+- **Prevents overfitting**: Avoids memorizing training data
+
+### Creating Train/Test Split
+
+```python
+# Create a larger dataset for demonstration
+X_full = np.array([1, 2, 3, 4, 5, 6, 7, 8], dtype=float)
+y_full = np.array([50, 60, 70, 80, 90, 100, 110, 120], dtype=float)
+
+# Split: 75% train, 25% test
+split_idx = int(len(X_full) * 0.75)
+X_train = X_full[:split_idx]
+y_train = y_full[:split_idx]
+X_test = X_full[split_idx:]
+y_test = y_full[split_idx:]
+
+print(f"Training set: {len(X_train)} samples")
+print(f"Test set: {len(X_test)} samples")
+```
+
+**Code Explanation:**
+- `X_full`, `y_full`: Complete dataset (8 samples)
+- `split_idx = int(len(X_full) * 0.75)`: Calculate 75% split point
+  - `len(X_full) * 0.75 = 8 * 0.75 = 6`
+  - `int(6) = 6` (first 6 samples for training)
+- `X_train = X_full[:split_idx]`: First 6 samples (indices 0-5)
+- `X_test = X_full[split_idx:]`: Last 2 samples (indices 6-7)
+- Same for `y_train` and `y_test`
+
+**Output:**
+```
+Training set: 6 samples
+Test set: 2 samples
+```
+
+### Training on Training Set Only
+
+```python
+# Train model on training set only
+w_train = 0.0
+b_train = 0.0
+lr = 0.01
+
+for epoch in range(1000):
+    y_pred_train = w_train * X_train + b_train
+    dw = np.mean((y_pred_train - y_train) * X_train)
+    db = np.mean(y_pred_train - y_train)
+    w_train -= lr * dw
+    b_train -= lr * db
+```
+
+**Code Explanation:**
+- Same training process as before
+- **Important**: Only use `X_train` and `y_train` for training
+- Never look at test data during training!
+
+### Evaluating on Both Sets
+
+```python
+# Make predictions on both sets
+y_pred_train_final = w_train * X_train + b_train
+y_pred_test_final = w_train * X_test + y_test
+
+# Calculate errors
+train_error = np.mean((y_pred_train_final - y_train) ** 2)
+test_error = np.mean((y_pred_test_final - y_test) ** 2)
+
+print(f"Training MSE: {train_error:.2f}")
+print(f"Test MSE: {test_error:.2f}")
+```
+
+**Code Explanation:**
+- `y_pred_train_final`: Predictions on training data
+- `y_pred_test_final`: Predictions on test data (unseen during training)
+- `train_error`: Error on training set
+- `test_error`: Error on test set
+- **Good models** have similar train and test errors
+
+**Expected Output:**
+```
+Training MSE: 0.00
+Test MSE: 0.00
+```
+
+### Visualizing Train/Test Split
+
+```python
+from plotting import plot_train_test_split
+
+plot_train_test_split(X_train, y_train, X_test, y_test, 
+                     y_pred_train_final, y_pred_test_final,
+                     xlabel="Study Hours", ylabel="Exam Score",
+                     title="Train/Test Split Visualization")
+```
+
+**What you'll see:**
+- **Blue circles**: Training data (used for learning)
+- **Red squares**: Test data (used for evaluation)
+- **Dashed lines**: Model predictions
+- **Info box**: Shows split ratio
+
+### Key Insights
+
+1. **Training error** measures how well the model fits the training data
+2. **Test error** measures how well the model generalizes to new data
+3. **Good models**: Train error ≈ Test error
+4. **Overfitting**: Train error << Test error (model memorized training data)
+
+### Common Split Ratios
+
+| Ratio | Training | Test | Use Case |
+|-------|----------|------|----------|
+| 80/20 | 80% | 20% | Large datasets |
+| 75/25 | 75% | 25% | Medium datasets |
+| 70/30 | 70% | 30% | Small datasets |
+| 90/10 | 90% | 10% | Very large datasets |
+
+**Rule of thumb**: Use more data for training when you have lots of data.
+
+---
+
+## 1.15 Mini Exercises
 
 ### Exercise 1: Experiment with Learning Rate
 
@@ -833,7 +964,7 @@ y = np.array([10, 40, 90, 160, 250], dtype=float)  # y = 10x²
 
 ---
 
-## 1.15 Key Takeaways
+## 1.16 Key Takeaways
 
 ### What You've Learned
 
@@ -860,7 +991,7 @@ You now understand:
 
 ---
 
-## 1.16 Checklist (Before Moving On)
+## 1.17 Checklist (Before Moving On)
 
 Before proceeding to Step 2, make sure you understand:
 

@@ -186,7 +186,144 @@ print("Predictions:\n", preds)
 
 ---
 
-## 6.11 Comparing Scratch vs PyTorch
+## 6.11 Model Saving and Loading
+
+### Why Save Models?
+
+Saving models allows you to:
+- **Reuse trained models** without retraining
+- **Share models** with others
+- **Deploy models** to production
+- **Resume training** from checkpoints
+
+### Saving a Model
+
+```python
+# Save the model
+model_path = "xor_model.pth"
+torch.save({
+    'model_state_dict': model.state_dict(),
+    'optimizer_state_dict': optimizer.state_dict(),
+    'loss': losses[-1],
+}, model_path)
+
+print(f"✅ Model saved to {model_path}")
+print(f"   - Model weights: {model_path}")
+print(f"   - File size: ~{sum(p.numel() * 4 for p in model.parameters()) / 1024:.1f} KB")
+```
+
+**Code Explanation:**
+- `torch.save()`: Saves data to file
+- `model.state_dict()`: Dictionary containing all model weights
+- `optimizer.state_dict()`: Optimizer state (learning rate, momentum, etc.)
+- `losses[-1]`: Final training loss
+- `.pth` extension: PyTorch checkpoint file
+
+**What gets saved:**
+- Model architecture (weights and biases)
+- Optimizer state
+- Training loss
+- Any other metadata you include
+
+### Loading a Model
+
+```python
+# Create a new model instance (untrained)
+new_model = nn.Sequential(
+    nn.Linear(2, 4),
+    nn.ReLU(),
+    nn.Linear(4, 1),
+    nn.Sigmoid()
+)
+
+# Test new model (should be random)
+with torch.no_grad():
+    new_probs = new_model(X)
+    new_preds = (new_probs >= 0.5).int()
+    new_accuracy = (new_preds == y.int()).float().mean().item()
+
+print(f"New model accuracy (before loading): {new_accuracy:.2%}")
+print("  This is random because the model hasn't been trained yet")
+
+# Load the saved model
+print(f"Loading model from {model_path}...")
+checkpoint = torch.load(model_path)
+new_model.load_state_dict(checkpoint['model_state_dict'])
+print("✅ Model loaded successfully!")
+
+# Test loaded model (should match original)
+with torch.no_grad():
+    loaded_probs = new_model(X)
+    loaded_preds = (loaded_probs >= 0.5).int()
+    loaded_accuracy = (loaded_preds == y.int()).float().mean().item()
+
+print(f"Loaded model accuracy: {loaded_accuracy:.2%}")
+print("  This matches the original trained model!")
+```
+
+**Code Explanation:**
+- `new_model`: Create fresh model instance (same architecture)
+- `torch.load()`: Load checkpoint from file
+- `checkpoint['model_state_dict']`: Extract model weights
+- `new_model.load_state_dict()`: Load weights into model
+- `torch.no_grad()`: Disable gradient computation (faster inference)
+
+**Expected Output:**
+```
+New model accuracy (before loading): 50.00%
+  This is random because the model hasn't been trained yet
+Loading model from xor_model.pth...
+✅ Model loaded successfully!
+Loaded model accuracy: 100.00%
+  This matches the original trained model!
+```
+
+### Best Practices
+
+1. **Save checkpoints during training**:
+   ```python
+   if epoch % 100 == 0:
+       torch.save({
+           'epoch': epoch,
+           'model_state_dict': model.state_dict(),
+           'optimizer_state_dict': optimizer.state_dict(),
+           'loss': loss,
+       }, f'checkpoint_epoch_{epoch}.pth')
+   ```
+
+2. **Save best model**:
+   ```python
+   best_loss = float('inf')
+   for epoch in range(num_epochs):
+       # ... training ...
+       if loss < best_loss:
+           best_loss = loss
+           torch.save(model.state_dict(), 'best_model.pth')
+   ```
+
+3. **Save only weights** (smaller file):
+   ```python
+   torch.save(model.state_dict(), 'model_weights.pth')
+   ```
+
+4. **Load with error handling**:
+   ```python
+   try:
+       checkpoint = torch.load('model.pth')
+       model.load_state_dict(checkpoint['model_state_dict'])
+   except FileNotFoundError:
+       print("Model file not found!")
+   ```
+
+### File Formats
+
+- **`.pth`**: PyTorch checkpoint (recommended)
+- **`.pt`**: Alternative PyTorch extension
+- **`.pkl`**: Pickle format (less common)
+
+---
+
+## 6.12 Comparing Scratch vs PyTorch
 
 | From Scratch | PyTorch |
 |------------|---------|
@@ -200,7 +337,7 @@ Learn from scratch → build with PyTorch.
 
 ---
 
-## 6.12 Mini Projects (Choose One)
+## 6.13 Mini Projects (Choose One)
 
 ### Project 1
 Pass / Fail predictor (study hours)
@@ -213,7 +350,7 @@ Student performance predictor (multi-feature)
 
 ---
 
-## 6.13 Common Beginner Mistakes
+## 6.14 Common Beginner Mistakes
 
 ❌ Using PyTorch without understanding math  
 ❌ Forgetting `optimizer.zero_grad()`  
@@ -222,7 +359,7 @@ Student performance predictor (multi-feature)
 
 ---
 
-## 6.14 Final Checklist (Bootcamp Complete 🎓)
+## 6.15 Final Checklist (Bootcamp Complete 🎓)
 
 Students can:
 - Explain neurons mathematically

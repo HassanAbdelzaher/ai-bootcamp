@@ -110,6 +110,70 @@ class SimpleCNN(nn.Module):
 
 ---
 
+## 8.5.1 Model Architecture Diagram
+
+### Visualizing the Network Structure
+
+Understanding the architecture of your CNN is crucial. A visual diagram helps you see how data flows through the network.
+
+```python
+from plotting import plot_model_architecture
+
+model = SimpleCNN(num_classes=2)
+
+# Visualize model architecture
+plot_model_architecture(model, input_shape="(batch, 1, 28, 28)", 
+                       title="SimpleCNN Architecture")
+```
+
+**Code Explanation:**
+- `plot_model_architecture()`: Creates a visual diagram of the model
+- `input_shape`: Shows the expected input shape
+- `title`: Title for the diagram
+
+**What you'll see:**
+- **Layer flow**: Shows how data moves through each layer
+- **Layer types**: Displays the type of each layer (Conv2d, MaxPool2d, Linear)
+- **Parameter counts**: Shows how many parameters each layer has
+- **Total parameters**: Overall model size
+
+### Understanding the Diagram
+
+**The diagram shows:**
+1. **Input**: Images (batch, channels, height, width)
+2. **Conv layers**: Extract features from images
+3. **Pool layers**: Reduce spatial dimensions
+4. **FC layers**: Final classification
+
+**Key information:**
+- **Layer names**: Identify each component
+- **Layer types**: Understand what each layer does
+- **Parameter counts**: See model complexity
+- **Total parameters**: Overall model size
+
+**Example output:**
+```
+Model Architecture:
+  Input: (batch, 1, 28, 28)
+  Conv1: 16 filters, 3x3
+  Pool1: 2x2 max pooling
+  Conv2: 32 filters, 3x3
+  Pool2: 2x2 max pooling
+  FC1: 64 neurons
+  FC2: 2 classes
+Total Parameters: ~50,000
+```
+
+### Why Visualize Architecture?
+
+1. **Understanding flow**: See how data transforms through layers
+2. **Debugging**: Identify where problems might occur
+3. **Optimization**: Find bottlenecks or unnecessary layers
+4. **Communication**: Explain model to others
+5. **Documentation**: Keep track of model structure
+
+---
+
 ## 8.6 CNN Architecture Components
 
 ### 1. Convolutional Layer (`Conv2d`)

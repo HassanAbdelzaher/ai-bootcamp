@@ -231,7 +231,115 @@ plt.show()
 
 ---
 
-## 5.13 Why Step 5 Is Critical
+## 5.13 Understanding Overfitting
+
+### What is Overfitting?
+
+**Overfitting** occurs when a model learns the training data too well and fails to generalize to new data.
+
+**Signs of overfitting:**
+- Training loss continues decreasing
+- Validation loss decreases then **increases** (after a point)
+- Model memorizes training data instead of learning patterns
+- Model performs well on training data but poorly on test data
+
+### Demonstrating Overfitting
+
+```python
+from plotting import plot_overfitting
+
+# Create a scenario to demonstrate overfitting
+# Use a larger network and train for many epochs
+np.random.seed(42)
+W1_overfit = np.random.randn(2, 8) * 0.1  # Larger hidden layer
+b1_overfit = np.zeros((1, 8))
+W2_overfit = np.random.randn(8, 1) * 0.1
+b2_overfit = np.zeros((1, 1))
+
+def forward_overfit(X):
+    """Forward pass for overfitting demo"""
+    Z1 = X @ W1_overfit + b1_overfit
+    A1 = sigmoid(Z1)
+    Z2 = A1 @ W2_overfit + b2_overfit
+    A2 = sigmoid(Z2)
+    return A1, A2
+
+# Create validation set (slightly different data)
+X_val = X + np.random.randn(*X.shape) * 0.05  # Add small noise
+y_val = y.copy()
+
+train_losses = []
+val_losses = []
+lr_overfit = 0.1
+
+print("Training with larger network (demonstrating overfitting)...")
+for epoch in range(10000):
+    # Training
+    _, y_pred_train = forward_overfit(X)
+    train_loss = -np.mean(y * np.log(y_pred_train + 1e-9) + (1 - y) * np.log(1 - y_pred_train + 1e-9))
+    train_losses.append(train_loss)
+    
+    # Validation
+    _, y_pred_val = forward_overfit(X_val)
+    val_loss = -np.mean(y_val * np.log(y_pred_val + 1e-9) + (1 - y_val) * np.log(1 - y_pred_val + 1e-9))
+    val_losses.append(val_loss)
+    
+    # Backpropagation (simplified)
+    if epoch < 5000:  # Only train for first half
+        # ... backprop code ...
+        pass
+
+# Visualize overfitting
+plot_overfitting(train_losses, val_losses, 
+                title="Overfitting Detection: Training vs Validation Loss")
+```
+
+**Code Explanation:**
+- `W1_overfit`, `W2_overfit`: Larger network (8 hidden neurons vs 4)
+- `X_val`: Validation set (slightly different from training data)
+- `train_losses`: Loss on training data
+- `val_losses`: Loss on validation data
+- `plot_overfitting()`: Visualizes both losses together
+
+### Interpreting the Overfitting Plot
+
+**What you'll see:**
+1. **Early training**: Both losses decrease together
+2. **Overfitting starts**: Validation loss stops decreasing
+3. **Overfitting region**: Validation loss **increases** while training loss continues decreasing
+4. **Best model**: At the point where validation loss is minimum
+
+**Key observations:**
+- Training loss continues decreasing
+- Validation loss decreases then increases (overfitting starts)
+- Best model is at minimum validation loss
+- Solution: Early stopping, regularization, more data
+
+### Solutions to Overfitting
+
+1. **Early Stopping**: Stop training when validation loss stops improving
+2. **Regularization**: Add penalty for large weights (L1/L2)
+3. **Dropout**: Randomly disable neurons during training
+4. **More Data**: Collect more training examples
+5. **Simpler Model**: Reduce model complexity (fewer layers/neurons)
+
+### When Does Overfitting Occur?
+
+**Common causes:**
+- Model too complex for dataset size
+- Training for too many epochs
+- Not enough training data
+- No validation set to monitor
+
+**Prevention:**
+- Always use train/validation/test splits
+- Monitor validation loss during training
+- Use early stopping
+- Apply regularization techniques
+
+---
+
+## 5.14 Why Step 5 Is Critical
 
 ✅ Explains **why deep learning exists**  
 ✅ Shows limits of shallow models  
@@ -240,7 +348,7 @@ plt.show()
 
 ---
 
-## 5.14 Mini Exercises
+## 5.15 Mini Exercises
 
 ### Exercise 1
 Change number of hidden neurons:
@@ -251,11 +359,17 @@ Change number of hidden neurons:
 Replace sigmoid with ReLU in hidden layer.
 
 ### Exercise 3 (Thinking)
-Why does adding depth help but adding width sometimes doesn’t?
+Why does adding depth help but adding width sometimes doesn't?
+
+### Exercise 4
+Experiment with early stopping to prevent overfitting:
+- Monitor validation loss
+- Stop training when validation loss stops improving
+- Compare final model performance
 
 ---
 
-## 5.15 Checklist (Before Moving On)
+## 5.16 Checklist (Before Moving On)
 
 Students should understand:
 - Why XOR fails for perceptron

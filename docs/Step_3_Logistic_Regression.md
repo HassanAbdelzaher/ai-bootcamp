@@ -256,7 +256,135 @@ plt.show()
 
 ---
 
-## 3.12 Why Logistic Regression is Better Than Perceptron
+## 3.12 ROC Curve (Receiver Operating Characteristic)
+
+### What is ROC Curve?
+
+The **ROC curve** shows model performance across different classification thresholds. It's a powerful tool for evaluating binary classifiers.
+
+**Key components:**
+- **X-axis**: False Positive Rate (1 - Specificity)
+  - FPR = FP / (FP + TN)
+  - How often we incorrectly predict positive
+- **Y-axis**: True Positive Rate (Recall/Sensitivity)
+  - TPR = TP / (TP + FN)
+  - How often we correctly predict positive
+- **AUC (Area Under Curve)**: Single number summarizing performance
+  - AUC = 1.0: Perfect classifier
+  - AUC = 0.5: Random classifier (no better than guessing)
+  - AUC > 0.7: Good classifier
+
+### Calculating ROC Curve
+
+```python
+def calculate_roc_curve(y_true, y_scores):
+    """Calculate ROC curve points"""
+    # Sort by scores (descending)
+    sorted_indices = np.argsort(y_scores)[::-1]
+    y_true_sorted = y_true[sorted_indices]
+    y_scores_sorted = y_scores[sorted_indices]
+    
+    # Calculate TPR and FPR for each threshold
+    thresholds = np.unique(y_scores_sorted)
+    thresholds = np.append(thresholds, [1.0, 0.0])  # Add endpoints
+    thresholds = np.sort(thresholds)[::-1]
+    
+    tpr = []
+    fpr = []
+    
+    for threshold in thresholds:
+        y_pred = (y_scores_sorted >= threshold).astype(int)
+        
+        tp = np.sum((y_pred == 1) & (y_true_sorted == 1))
+        fp = np.sum((y_pred == 1) & (y_true_sorted == 0))
+        tn = np.sum((y_pred == 0) & (y_true_sorted == 0))
+        fn = np.sum((y_pred == 0) & (y_true_sorted == 1))
+        
+        tpr_val = tp / (tp + fn) if (tp + fn) > 0 else 0
+        fpr_val = fp / (fp + tn) if (fp + tn) > 0 else 0
+        
+        tpr.append(tpr_val)
+        fpr.append(fpr_val)
+    
+    # Calculate AUC using trapezoidal rule
+    auc = np.trapz(tpr, fpr)
+    
+    return np.array(fpr), np.array(tpr), auc
+```
+
+**Code Explanation:**
+- `y_true`: Actual labels (0 or 1)
+- `y_scores`: Predicted probabilities (0 to 1)
+- `np.argsort(y_scores)[::-1]`: Sort indices by score (highest first)
+- For each threshold:
+  - Convert probabilities to predictions (≥ threshold = 1)
+  - Calculate True Positives (TP), False Positives (FP), etc.
+  - Compute TPR and FPR
+- `np.trapz(tpr, fpr)`: Calculate area under curve using trapezoidal rule
+
+### Using ROC Curve
+
+```python
+from plotting import plot_roc_curve
+
+# Get probabilities for all data points
+final_probs_all = sigmoid(w * X + b)
+fpr, tpr, auc_score = calculate_roc_curve(y, final_probs_all)
+
+print(f"AUC Score: {auc_score:.3f}")
+print("  AUC = 1.0: Perfect classifier")
+print("  AUC = 0.5: Random classifier (no better than guessing)")
+print("  AUC > 0.7: Good classifier")
+
+# Plot ROC curve
+plot_roc_curve(fpr, tpr, auc_score, title="ROC Curve for Logistic Regression Model")
+```
+
+**Code Explanation:**
+- `final_probs_all`: All predicted probabilities
+- `calculate_roc_curve()`: Computes FPR, TPR, and AUC
+- `plot_roc_curve()`: Visualizes the ROC curve
+
+**Expected Output:**
+```
+AUC Score: 1.000
+  AUC = 1.0: Perfect classifier
+  AUC = 0.5: Random classifier (no better than guessing)
+  AUC > 0.7: Good classifier
+```
+
+### Interpreting ROC Curve
+
+**What to look for:**
+1. **Curve shape**: 
+   - Closer to top-left corner = better model
+   - Diagonal line = random classifier (AUC = 0.5)
+2. **AUC value**:
+   - 0.9-1.0: Excellent
+   - 0.8-0.9: Good
+   - 0.7-0.8: Fair
+   - 0.5-0.7: Poor
+   - 0.5: Random
+
+**Example interpretations:**
+- AUC = 0.95: Model correctly ranks 95% of positive examples higher than negative examples
+- AUC = 0.80: Model correctly ranks 80% of positive examples higher than negative examples
+- AUC = 0.50: Model is no better than random guessing
+
+### When to Use ROC Curve
+
+✅ **Use ROC curve when:**
+- Balanced dataset (similar number of positive and negative examples)
+- You care about both false positives and false negatives
+- You want to compare multiple models
+
+❌ **Don't use ROC curve when:**
+- Highly imbalanced dataset (use Precision-Recall curve instead)
+- You care more about one type of error (e.g., false positives)
+
+---
+
+## 3.13 Why Logistic Regression is Better Than Perceptron
 
 ✅ Smooth learning  
 ✅ Probability output  
@@ -265,24 +393,29 @@ plt.show()
 
 ---
 
-## 3.13 Mini Exercises
+## 3.14 Mini Exercises
 
 ### Exercise 1
 Change the threshold to:
 - 0.7
 - 0.3
 
-What changes?
+What changes? Observe how the ROC curve changes.
 
 ### Exercise 2
-Add more data points and retrain.
+Add more data points and retrain. Compare AUC scores before and after.
 
 ### Exercise 3 (Thinking)
 Why is sigmoid better than step function for learning?
 
+### Exercise 4
+What does an AUC of 0.8 mean in practical terms?
+- How often does the model correctly rank positive examples?
+- Is this a good classifier?
+
 ---
 
-## 3.14 Checklist (Before Moving On)
+## 3.15 Checklist (Before Moving On)
 
 Students should understand:
 - Difference between decision and probability
