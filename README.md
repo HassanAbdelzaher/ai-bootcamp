@@ -90,6 +90,11 @@ By the end of this bootcamp, you'll be able to:
 - **Skills**: Multi-layer networks, solving complex patterns
 - **Outcome**: Understand why deep learning works
 
+##### Step 5b: Regularization and Overfitting
+- Prevent overfitting with L2 regularization, dropout, early stopping
+- Visualize overfitting and compare regularization techniques
+- Best practices for model generalization
+
 **Milestone 2**: You can build and train neural networks!
 
 ---
@@ -102,6 +107,12 @@ By the end of this bootcamp, you'll be able to:
 - **Topics**: PyTorch framework, tensors, autograd, nn.Module
 - **Skills**: Using professional AI tools
 - **Outcome**: Build networks the way professionals do
+
+##### Step 6b: Optimization Techniques
+- Compare SGD, Adam, RMSprop optimizers
+- Learning rate scheduling
+- Momentum and adaptive methods
+- When to use each optimizer
 
 **Milestone 3**: You're using industry-standard tools!
 
@@ -246,6 +257,7 @@ That's it! You're ready to learn AI! 🎉
 - ✅ **Learning Algorithms**: Gradient descent, backpropagation, optimization
 - ✅ **Loss Functions**: MSE, cross-entropy, when to use each
 - ✅ **Training Process**: Epochs, batches, learning rates, convergence
+- ✅ **Regularization**: L2, dropout, early stopping, preventing overfitting
 
 ### Neural Network Types
 
@@ -258,6 +270,7 @@ That's it! You're ready to learn AI! 🎉
 ### Practical Skills
 
 - ✅ **PyTorch**: Industry-standard deep learning framework
+- ✅ **Optimization**: SGD, Adam, RMSprop, learning rate scheduling
 - ✅ **Data Preprocessing**: Normalization, augmentation
 - ✅ **Model Evaluation**: Accuracy, loss curves, metrics
 - ✅ **Transfer Learning**: Using pre-trained models
@@ -287,7 +300,9 @@ make run-step-2    # Run Step 2: Perceptron
 make run-step-3    # Run Step 3: Logistic Regression
 make run-step-4    # Run Step 4: Multiple Neurons
 make run-step-5    # Run Step 5: XOR and Hidden Layers
+make run-step-5b   # Run Step 5b: Regularization and Overfitting
 make run-step-6    # Run Step 6: PyTorch
+make run-step-6b   # Run Step 6b: Optimization Techniques
 make run-step-7    # Run Step 7: RNNs (Sequences)
 make run-step-8    # Run Step 8: CNNs (Images)
 ```
@@ -309,16 +324,11 @@ make run-step-8d   # Object Detection (YOLO, R-CNN)
 make run-step-8e   # Image Generation (GANs, VAEs)
 ```
 
-### Practical Examples
+### Projects (Practical Applications)
 
 ```bash
-make example-0     # Simple neuron example
-make example-1     # Linear regression neuron
-make example-2     # Perceptron neuron
-make example-3     # Logistic regression neuron
-make example-4     # Multiple neurons
-make example-5     # Deep network
-make example-6     # PyTorch neurons
+make project-1     # Project 1: Simple Predictor (House prices, Spam classifier)
+make project-2     # Project 2: Multi-Class Classifier (Digit recognition)
 make example-vg    # Vanishing Gradient visualization
 ```
 
@@ -366,7 +376,7 @@ All dependencies are specified in `requirements.txt` and installed automatically
 1. **Start with Step 0** - Don't skip the foundations!
 2. **Read the documentation** - Each step has a detailed markdown file in `docs/`
 3. **Run the code** - Execute each step to see it in action
-4. **Try the examples** - Run practical examples after each step (`make example-0`, etc.)
+4. **Try the projects** - Apply concepts with hands-on projects in `projects/` folder
 5. **Experiment** - Modify parameters, try different values
 6. **Understand** - Don't just copy code, understand what it does
 7. **Build** - Use what you learn to create your own projects

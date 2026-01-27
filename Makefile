@@ -7,7 +7,7 @@ PYTHON = $(VENV)/bin/python
 PIP = $(VENV)/bin/pip
 SHELL = /bin/bash
 
-.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-6 run-step-7 run-step-7a run-step-7b run-step-7c run-step-7d run-step-8 run-step-8a run-step-8b run-step-8c run-step-8d run-step-8e example-0 example-1 example-2 example-3 example-4 example-5 example-6 example-vg project-1 project-2 test check
+.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-5b run-step-6 run-step-6b run-step-7 run-step-7a run-step-7b run-step-7c run-step-7d run-step-8 run-step-8a run-step-8b run-step-8c run-step-8d run-step-8e example-vg project-1 project-2 test check
 
 # Default target
 help:
@@ -24,7 +24,9 @@ help:
 	@echo "  make run-step-3       - Run Step 3: Logistic Regression"
 	@echo "  make run-step-4       - Run Step 4: Multiple Neurons"
 	@echo "  make run-step-5       - Run Step 5: XOR and Hidden Layers"
+	@echo "  make run-step-5b      - Run Step 5b: Regularization and Overfitting"
 	@echo "  make run-step-6       - Run Step 6: PyTorch"
+	@echo "  make run-step-6b      - Run Step 6b: Optimization Techniques"
 	@echo "  make run-step-7       - Run Step 7: RNNs (Sequences)"
 	@echo "  make run-step-7a      - Run Step 7a: Text Generator"
 	@echo "  make run-step-7b      - Run Step 7b: Stock Price Prediction"
@@ -117,9 +119,17 @@ run-step-5: venv
 	@echo "Running Step 5: XOR and Hidden Layers..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python step_5_xor_and_hidden_layers.py"
 
+run-step-5b: venv
+	@echo "Running Step 5b: Regularization and Overfitting..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_5b_regularization.py"
+
 run-step-6: venv
 	@echo "Running Step 6: PyTorch..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python step_6_pytorch.py"
+
+run-step-6b: venv
+	@echo "Running Step 6b: Optimization Techniques..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_6b_optimization_techniques.py"
 
 run-step-7: venv
 	@echo "Running Step 7: RNNs (Sequences)..."
