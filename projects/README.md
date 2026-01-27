@@ -10,13 +10,23 @@ This folder contains practical projects that let you apply the concepts from the
 
 ```
 projects/
-├── README.md                    # This file
-├── project_1_simple_predictor/  # Linear/Logistic Regression
-├── project_2_classifier/        # Multi-class Classification
-├── project_3_text_analyzer/     # Text Processing & Classification
-├── project_4_image_classifier/  # CNN Image Classification
-├── project_5_time_series/        # RNN Time Series Prediction
-└── project_6_complete_app/      # End-to-End Application
+├── README.md                           # This file
+├── project_1_simple_predictor/         # Linear/Logistic Regression
+├── project_2_classifier/               # Multi-class Classification
+├── project_3_text_analyzer/            # Text Processing & Classification
+├── project_3c_evaluation_metrics/      # Advanced Evaluation Metrics
+├── project_4_image_classifier/         # CNN Image Classification
+├── project_5_time_series/              # RNN Time Series Prediction
+├── project_5b_regularization/          # Regularization & Overfitting
+├── project_6_complete_app/             # End-to-End Application
+├── project_6b_optimization/             # Optimization Techniques
+├── project_6c_hyperparameter_tuning/   # Hyperparameter Tuning
+├── project_7d_transformers/            # Transformers & Attention
+├── project_7e_nlp_applications/        # NLP Applications
+├── project_8d_object_detection/        # Object Detection
+├── project_8e_image_generation/        # Image Generation (GANs, VAEs)
+├── project_8f_advanced_vision/         # Advanced Vision Tasks
+└── project_11_reinforcement_learning/  # Reinforcement Learning
 ```
 
 ---
@@ -144,17 +154,242 @@ Build a complete AI application combining multiple concepts:
 
 ---
 
+### Project 3c: Advanced Evaluation Metrics
+**Difficulty**: ⭐⭐ Intermediate  
+**Time**: 2-3 hours  
+**Concepts**: Step 3c (Advanced Evaluation Metrics)
+
+Master comprehensive model evaluation:
+- Classification metrics (Precision, Recall, F1, ROC, AUC)
+- Regression metrics (R², MAE, MAPE, RMSE)
+- Model comparison techniques
+- Visualization of performance
+
+**Skills Learned:**
+- Advanced evaluation metrics
+- ROC and PR curves
+- Model comparison
+- Performance visualization
+
+**📖 [View Detailed Documentation →](project_3c_evaluation_metrics/README.md)**
+
+---
+
+### Project 5b: Regularization and Overfitting
+**Difficulty**: ⭐⭐ Intermediate  
+**Time**: 2-3 hours  
+**Concepts**: Step 5b (Regularization and Overfitting)
+
+Learn to prevent overfitting:
+- Detect overfitting in models
+- Apply L2 regularization (weight decay)
+- Use dropout effectively
+- Implement early stopping
+- Compare regularization techniques
+
+**Skills Learned:**
+- Overfitting detection
+- Regularization techniques
+- Model generalization
+- Training optimization
+
+**📖 [View Detailed Documentation →](project_5b_regularization/README.md)**
+
+---
+
+### Project 6b: Optimization Techniques
+**Difficulty**: ⭐⭐ Intermediate  
+**Time**: 2-3 hours  
+**Concepts**: Step 6b (Optimization Techniques)
+
+Compare and master optimization algorithms:
+- SGD, Adam, RMSprop optimizers
+- Learning rate scheduling
+- Momentum and adaptive methods
+- Choose optimal optimizer
+
+**Skills Learned:**
+- Optimizer comparison
+- Learning rate scheduling
+- Training optimization
+- Convergence analysis
+
+**📖 [View Detailed Documentation →](project_6b_optimization/README.md)**
+
+---
+
+### Project 6c: Hyperparameter Tuning
+**Difficulty**: ⭐⭐⭐ Advanced  
+**Time**: 3-4 hours  
+**Concepts**: Step 6c (Hyperparameter Tuning)
+
+Systematically find best hyperparameters:
+- Grid search implementation
+- Random search techniques
+- Learning rate tuning
+- Hyperparameter importance analysis
+
+**Skills Learned:**
+- Systematic hyperparameter search
+- Grid vs random search
+- Learning rate optimization
+- Model performance tuning
+
+**📖 [View Detailed Documentation →](project_6c_hyperparameter_tuning/README.md)**
+
+---
+
+### Project 7d: Transformers and Attention
+**Difficulty**: ⭐⭐⭐⭐ Expert  
+**Time**: 4-5 hours  
+**Concepts**: Step 7d (Transformers)
+
+Build Transformer models with attention:
+- Implement self-attention mechanism
+- Build Transformer encoder blocks
+- Multi-head attention
+- Apply to text classification
+
+**Skills Learned:**
+- Attention mechanisms
+- Transformer architecture
+- Positional encoding
+- Modern NLP models
+
+**📖 [View Detailed Documentation →](project_7d_transformers/README.md)**
+
+---
+
+### Project 7e: NLP Applications
+**Difficulty**: ⭐⭐⭐ Advanced  
+**Time**: 4-5 hours  
+**Concepts**: Step 7e (NLP Applications)
+
+Build practical NLP systems:
+- Tokenization (character, word, subword)
+- Word embeddings (one-hot, learned, pre-trained)
+- Named Entity Recognition (NER)
+- Sentiment analysis
+- Text classification pipeline
+
+**Skills Learned:**
+- Text preprocessing
+- Word embeddings
+- NER implementation
+- Sentiment classification
+- NLP pipelines
+
+**📖 [View Detailed Documentation →](project_7e_nlp_applications/README.md)**
+
+---
+
+### Project 8d: Object Detection
+**Difficulty**: ⭐⭐⭐⭐ Expert  
+**Time**: 5-6 hours  
+**Concepts**: Step 8d (Object Detection)
+
+Detect and locate objects in images:
+- Bounding box annotations
+- Object detection models
+- YOLO-style detection (simplified)
+- Multi-object detection
+- Evaluation metrics (IoU)
+
+**Skills Learned:**
+- Object detection
+- Bounding boxes
+- Detection architectures
+- Multi-object handling
+
+**📖 [View Detailed Documentation →](project_8d_object_detection/README.md)**
+
+---
+
+### Project 8e: Image Generation (GANs, VAEs)
+**Difficulty**: ⭐⭐⭐⭐ Expert  
+**Time**: 6-8 hours  
+**Concepts**: Step 8e (Image Generation)
+
+Generate new images using generative models:
+- Generative Adversarial Networks (GANs)
+- Variational Autoencoders (VAEs)
+- Image generation techniques
+- Evaluate generated images
+
+**Skills Learned:**
+- Generative models
+- GAN architecture
+- VAE implementation
+- Image generation
+
+**📖 [View Detailed Documentation →](project_8e_image_generation/README.md)**
+
+---
+
+### Project 8f: Advanced Vision Tasks
+**Difficulty**: ⭐⭐⭐⭐ Expert  
+**Time**: 6-8 hours  
+**Concepts**: Step 8f (Advanced Vision Tasks)
+
+Master advanced computer vision:
+- Image segmentation (semantic, instance)
+- Style transfer
+- Super-resolution
+- Depth estimation
+
+**Skills Learned:**
+- Segmentation models
+- Style transfer techniques
+- Super-resolution
+- Depth estimation
+
+**📖 [View Detailed Documentation →](project_8f_advanced_vision/README.md)**
+
+---
+
+### Project 11: Reinforcement Learning
+**Difficulty**: ⭐⭐⭐⭐ Expert  
+**Time**: 5-6 hours  
+**Concepts**: Step 11 (Reinforcement Learning)
+
+Build AI agents that learn through interaction:
+- Grid World environment
+- Q-learning algorithm
+- Epsilon-greedy exploration
+- Policy evaluation
+- Value iteration
+
+**Skills Learned:**
+- Reinforcement learning concepts
+- Q-learning implementation
+- Exploration vs exploitation
+- Agent training
+
+**📖 [View Detailed Documentation →](project_11_reinforcement_learning/README.md)**
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-Before starting projects, make sure you've completed:
+Before starting projects, make sure you've completed the corresponding steps:
 - **Project 1**: Steps 0-3
 - **Project 2**: Steps 0-5
 - **Project 3**: Steps 0-7
+- **Project 3c**: Steps 0-3 (especially Step 3)
 - **Project 4**: Steps 0-8
 - **Project 5**: Steps 0-7 (especially 7b, 7c)
+- **Project 5b**: Steps 0-5 (especially Step 5)
 - **Project 6**: All steps
+- **Project 6b**: Steps 0-6 (especially Step 6)
+- **Project 6c**: Steps 0-6 (especially Step 6)
+- **Project 7d**: Steps 0-7 (especially Step 7)
+- **Project 7e**: Steps 0-7 (especially Step 7)
+- **Project 8d**: Steps 0-8 (especially Step 8)
+- **Project 8e**: Steps 0-8 (especially Step 8)
+- **Project 8f**: Steps 0-8 (especially Step 8)
+- **Project 11**: Steps 0-6 (basic ML concepts)
 
 ### Setup
 
