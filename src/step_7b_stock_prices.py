@@ -20,15 +20,27 @@ print()
 # 7b.1 Generate Synthetic Stock Price Data
 print("=== 7b.1 Generate Synthetic Stock Price Data ===")
 def generate_stock_prices(days=200, start_price=100, volatility=0.02):
-    """Generate synthetic stock price data"""
+    """Generate synthetic stock price data using random walk model"""
+    # Start with initial price
     prices = [start_price]
     
+    # Generate prices for remaining days
     for _ in range(days - 1):
         # Random walk with slight upward trend
+        # np.random.normal(mean, std) generates random value from normal distribution
+        # mean=0.001: Slight upward trend (0.1% average daily increase)
+        # std=volatility: Daily price volatility (2% standard deviation)
         change = np.random.normal(0.001, volatility)
+        
+        # Calculate new price: previous price * (1 + percentage change)
+        # Example: $100 * (1 + 0.01) = $101 (1% increase)
         new_price = prices[-1] * (1 + change)
-        prices.append(max(new_price, 1))  # Price can't go below 1
+        
+        # Ensure price doesn't go below $1 (realistic constraint)
+        # max(new_price, 1) returns new_price if >= 1, else 1
+        prices.append(max(new_price, 1))
     
+    # Convert list to NumPy array for easier manipulation
     return np.array(prices)
 
 # Generate training data
@@ -42,13 +54,26 @@ print()
 print("=== 7b.2 Prepare Sequences ===")
 def create_price_sequences(prices, seq_length=10):
     """Create sequences for time series prediction"""
-    X = []
-    y = []
+    # Lists to store input sequences and target values
+    X = []  # Input sequences (historical prices)
+    y = []  # Target values (next price to predict)
     
+    # Create sliding window sequences
+    # For each position i, use prices[i:i+seq_length] as input
+    # and prices[i+seq_length] as target
     for i in range(len(prices) - seq_length):
+        # Input: sequence of seq_length consecutive prices
+        # prices[i:i+seq_length] gets prices from index i to i+seq_length-1
+        # Example: i=0, seq_length=10 → prices[0:10] (first 10 prices)
         X.append(prices[i:i+seq_length])
+        
+        # Target: the next price after the sequence
+        # prices[i+seq_length] is the price at position i+seq_length
+        # Example: i=0, seq_length=10 → prices[10] (11th price)
         y.append(prices[i+seq_length])
     
+    # Convert to NumPy arrays
+    # dtype=np.float32: 32-bit float (PyTorch compatible, uses less memory)
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
 
 seq_length = 10
@@ -59,9 +84,24 @@ print(f"Example: Predict day {seq_length+1} from days 1-{seq_length}")
 print()
 
 # Normalize data (important for RNNs)
+# Normalization helps RNNs train faster and more stably
+# Formula: normalized = (value - mean) / std
+# This centers data around 0 and scales to unit variance
+
+# Calculate mean and standard deviation of input sequences
+# X.mean() calculates average across all values in X
 mean = X.mean()
+# X.std() calculates standard deviation across all values in X
 std = X.std()
+
+# Normalize input sequences: subtract mean, divide by std
+# (X - mean) centers data around 0
+# / std scales data to unit variance
 X_normalized = (X - mean) / std
+
+# Normalize target values using same mean and std
+# Important: Use same normalization parameters for X and y!
+# This ensures predictions are in the same scale
 y_normalized = (y - mean) / std
 
 print(f"Normalized data: mean={mean:.2f}, std={std:.2f}")
@@ -91,12 +131,23 @@ class StockPriceRNN(nn.Module):
     
     def forward(self, x):
         # x shape: (batch, seq_length, features)
+        # Example: (32, 10, 1) = 32 samples, 10 time steps, 1 feature (price) each
+        
+        # RNN processes sequence step by step
+        # self.rnn(x) returns:
+        # - rnn_out: Output at each time step, shape: (batch, seq_length, hidden_size)
+        # - hidden: Final hidden state from all layers
         rnn_out, hidden = self.rnn(x)
         
-        # Use last output
+        # Use last output from the sequence
+        # rnn_out[:, -1, :] gets last time step for each sample
+        # [:, -1, :] means: all batches, last time step, all hidden units
+        # Result shape: (batch, hidden_size)
         last_output = rnn_out[:, -1, :]  # (batch, hidden_size)
         
-        # Predict next price
+        # Predict next price using fully connected layer
+        # self.fc converts hidden state to price prediction
+        # Input: (batch, hidden_size) → Output: (batch, 1)
         prediction = self.fc(last_output)  # (batch, 1)
         return prediction
 

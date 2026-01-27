@@ -41,13 +41,25 @@ print("=== 3c.2 Creating Classification Problem ===")
 np.random.seed(42)
 
 # Generate synthetic binary classification data
+# num_samples: Number of data points to create
 num_samples = 200
+# X: Input features - random 2D points from standard normal distribution
+# np.random.randn(num_samples, 2) creates array of shape (200, 2)
+# Each row is one sample with 2 features
 X = np.random.randn(num_samples, 2)
 
-# Create labels (spiral-like pattern)
+# Create labels (circular pattern - non-linear boundary)
+# X[:, 0]**2 + X[:, 1]**2 calculates distance squared from origin (x² + y²)
+# > 1.5 creates boolean array: True if point is outside circle of radius sqrt(1.5)
+# .astype(int) converts True/False to 1/0
+# This creates a circular decision boundary (harder than linear)
 y = ((X[:, 0]**2 + X[:, 1]**2) > 1.5).astype(int)
 
-# Add some noise
+# Add some noise to make problem more realistic
+# np.random.random(num_samples) creates random values between 0 and 1
+# < 0.1 means 10% of samples will be flipped (noise)
+# np.where(condition, value_if_true, value_if_false)
+# If random < 0.1: flip label (1 - y), else keep original label (y)
 y = np.where(np.random.random(num_samples) < 0.1, 1 - y, y)
 
 print(f"Dataset: {num_samples} samples")
@@ -61,21 +73,39 @@ def sigmoid(z):
 
 def train_logistic_regression(X, y, epochs=2000, lr=0.1):
     """Train a simple logistic regression model"""
+    # Initialize weights randomly
+    # X.shape[1] gets number of features (2 in this case)
+    # np.random.randn(X.shape[1]) creates random values from standard normal distribution
+    # * 0.1 scales down initial weights (smaller values help training)
     w = np.random.randn(X.shape[1]) * 0.1
+    # Initialize bias to zero
     b = 0.0
     
+    # Training loop: repeat many times
     for epoch in range(epochs):
+        # ===== FORWARD PASS =====
+        # Calculate scores: z = X @ w + b
+        # X shape: (200, 2), w shape: (2,), result z shape: (200,)
         z = X @ w + b
-        y_pred = sigmoid(z)
+        # Convert scores to probabilities using sigmoid
+        y_pred = sigmoid(z)  # Shape: (200,) - probabilities between 0 and 1
         
-        # Gradient
+        # ===== CALCULATE GRADIENTS =====
+        # Gradient for weights: average((prediction - actual) × input)
+        # (y_pred - y) is error for each sample, shape: (200,)
+        # .reshape(-1, 1) converts to column vector: (200, 1)
+        # * X broadcasts: (200, 1) * (200, 2) → (200, 2)
+        # np.mean(..., axis=0) averages across samples, gives gradient per feature
         dw = np.mean((y_pred - y).reshape(-1, 1) * X, axis=0)
+        # Gradient for bias: average(prediction - actual)
         db = np.mean(y_pred - y)
         
-        # Update
-        w -= lr * dw
-        b -= lr * db
+        # ===== UPDATE WEIGHTS =====
+        # Move weights in opposite direction of gradient (to reduce loss)
+        w -= lr * dw  # Update weights: w = w - learning_rate * gradient
+        b -= lr * db  # Update bias: b = b - learning_rate * gradient
     
+    # Return learned weights and bias
     return w, b
 
 print("Training logistic regression model...")
@@ -83,10 +113,15 @@ w, b = train_logistic_regression(X, y)
 print("Training complete!")
 print()
 
-# Get predictions and probabilities
-z = X @ w + b
-probabilities = sigmoid(z)
-predictions = (probabilities >= 0.5).astype(int)
+# Get predictions and probabilities using trained model
+# Calculate scores for all samples
+z = X @ w + b  # Shape: (200,) - raw scores
+# Convert scores to probabilities (0 to 1)
+probabilities = sigmoid(z)  # Shape: (200,) - probabilities
+# Convert probabilities to binary predictions
+# (probabilities >= 0.5) creates boolean array: True if prob >= 0.5
+# .astype(int) converts True/False to 1/0
+predictions = (probabilities >= 0.5).astype(int)  # Shape: (200,) - binary predictions
 
 print(f"Model predictions:")
 print(f"  Probabilities range: {probabilities.min():.3f} to {probabilities.max():.3f}")
@@ -100,11 +135,26 @@ print("=== 3c.3 Confusion Matrix (Deep Dive) ===")
 print()
 
 def confusion_matrix(y_true, y_pred):
-    """Calculate confusion matrix"""
+    """Calculate confusion matrix components"""
+    # True Positives (TP): Predicted positive AND actually positive
+    # (y_pred == 1) creates boolean array: True where prediction is 1
+    # (y_true == 1) creates boolean array: True where actual is 1
+    # & is element-wise AND: True only where both are True
+    # np.sum() counts how many True values
     tp = np.sum((y_pred == 1) & (y_true == 1))  # True Positives
+    
+    # True Negatives (TN): Predicted negative AND actually negative
+    # Both predicted and actual are 0
     tn = np.sum((y_pred == 0) & (y_true == 0))  # True Negatives
+    
+    # False Positives (FP): Predicted positive BUT actually negative
+    # Model said "positive" but it was actually "negative" (Type I error)
     fp = np.sum((y_pred == 1) & (y_true == 0))  # False Positives
+    
+    # False Negatives (FN): Predicted negative BUT actually positive
+    # Model said "negative" but it was actually "positive" (Type II error)
     fn = np.sum((y_pred == 0) & (y_true == 1))  # False Negatives
+    
     return tp, tn, fp, fn
 
 tp, tn, fp, fn = confusion_matrix(y, predictions)
@@ -161,10 +211,32 @@ print()
 print("=== 3c.4 Basic Metrics ===")
 print()
 
+# Calculate metrics from confusion matrix components
+# Accuracy: Overall correctness - (correct predictions) / (total predictions)
 accuracy = (tp + tn) / (tp + tn + fp + fn)
+
+# Precision: How reliable are positive predictions?
+# = (True Positives) / (All predicted positives)
+# High precision = few false positives (when model says "positive", it's usually right)
+# if (tp + fp) > 0: avoid division by zero (if no positive predictions)
 precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+
+# Recall (Sensitivity): How many positives did we catch?
+# = (True Positives) / (All actual positives)
+# High recall = few false negatives (we catch most of the actual positives)
+# if (tp + fn) > 0: avoid division by zero (if no actual positives)
 recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+
+# Specificity: How many negatives did we catch?
+# = (True Negatives) / (All actual negatives)
+# High specificity = few false positives (we correctly reject most negatives)
+# if (tn + fp) > 0: avoid division by zero (if no actual negatives)
 specificity = tn / (tn + fp) if (tn + fp) > 0 else 0
+
+# F1-Score: Harmonic mean of precision and recall
+# Balances precision and recall (useful when you care about both)
+# Formula: 2 * (precision * recall) / (precision + recall)
+# if (precision + recall) > 0: avoid division by zero
 f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
 
 print("Metrics from Confusion Matrix:")

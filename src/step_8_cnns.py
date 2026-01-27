@@ -174,13 +174,27 @@ print()
 
 # Visualize model architecture
 print("=== 8.5.1 Model Architecture Diagram ===")
+# plot_model_architecture creates a visual diagram of the model structure
+# model: The PyTorch model to visualize
+# input_shape: String describing expected input shape
+#   - "(batch, 1, 28, 28)" means: batch_size × 1 channel × 28 height × 28 width
+#   - 1 channel = grayscale image, 3 channels = RGB color image
+# title: Title for the architecture diagram
 plot_model_architecture(model, input_shape="(batch, 1, 28, 28)", 
                        title="SimpleCNN Architecture")
+
+# Print explanation of what the diagram shows
 print("  This diagram shows the flow of data through the network")
 print("  - Input: Images (batch, channels, height, width)")
+#   - batch: Number of images processed together
+#   - channels: 1 for grayscale, 3 for RGB
+#   - height, width: Image dimensions in pixels
 print("  - Conv layers: Extract features")
+#   - Convolutional layers detect patterns (edges, shapes, objects)
 print("  - Pool layers: Reduce size")
+#   - Pooling layers shrink image size while preserving important features
 print("  - FC layers: Final classification")
+#   - Fully connected layers combine features and output class predictions
 print()
 
 # 8.6 Understanding CNN Components

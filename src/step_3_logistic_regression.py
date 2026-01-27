@@ -116,51 +116,102 @@ print("  - AUC (Area Under Curve): Higher is better (max = 1.0)")
 print()
 
 # Calculate ROC curve
+# ROC (Receiver Operating Characteristic) curve shows model performance at different thresholds
 def calculate_roc_curve(y_true, y_scores):
-    """Calculate ROC curve points"""
-    # Sort by scores (descending)
+    """Calculate ROC curve points (FPR, TPR) and AUC score"""
+    # Sort by scores (descending) - highest probabilities first
+    # np.argsort(y_scores) returns indices that would sort the array in ascending order
+    # [::-1] reverses the array, so we get descending order (highest first)
     sorted_indices = np.argsort(y_scores)[::-1]
-    y_true_sorted = y_true[sorted_indices]
-    y_scores_sorted = y_scores[sorted_indices]
+    
+    # Reorder both true labels and scores according to sorted indices
+    # This allows us to process data from highest to lowest probability
+    y_true_sorted = y_true[sorted_indices]      # Actual labels, sorted by score
+    y_scores_sorted = y_scores[sorted_indices]  # Predicted probabilities, sorted
     
     # Calculate TPR and FPR for each threshold
+    # np.unique() gets all unique probability values (potential thresholds)
     thresholds = np.unique(y_scores_sorted)
+    # Add endpoints: 1.0 (all predictions positive) and 0.0 (all predictions negative)
+    # This ensures we cover the full range of possible thresholds
     thresholds = np.append(thresholds, [1.0, 0.0])  # Add endpoints
+    # Sort thresholds in descending order (from 1.0 to 0.0)
     thresholds = np.sort(thresholds)[::-1]
     
-    tpr = []
-    fpr = []
+    # Lists to store True Positive Rate and False Positive Rate for each threshold
+    tpr = []  # True Positive Rate (Recall/Sensitivity)
+    fpr = []  # False Positive Rate (1 - Specificity)
     
+    # For each threshold, calculate TPR and FPR
     for threshold in thresholds:
+        # Convert probabilities to binary predictions
+        # (y_scores_sorted >= threshold) creates boolean array: True if score >= threshold
+        # .astype(int) converts True/False to 1/0
         y_pred = (y_scores_sorted >= threshold).astype(int)
         
+        # Calculate confusion matrix components
+        # True Positive (TP): Predicted positive AND actually positive
+        # (y_pred == 1) & (y_true_sorted == 1) creates boolean array where both are 1
+        # np.sum() counts how many True values
         tp = np.sum((y_pred == 1) & (y_true_sorted == 1))
+        
+        # False Positive (FP): Predicted positive BUT actually negative
+        # (y_pred == 1) & (y_true_sorted == 0) finds false alarms
         fp = np.sum((y_pred == 1) & (y_true_sorted == 0))
+        
+        # True Negative (TN): Predicted negative AND actually negative
+        # (y_pred == 0) & (y_true_sorted == 0) finds correct rejections
         tn = np.sum((y_pred == 0) & (y_true_sorted == 0))
+        
+        # False Negative (FN): Predicted negative BUT actually positive
+        # (y_pred == 0) & (y_true_sorted == 1) finds missed positives
         fn = np.sum((y_pred == 0) & (y_true_sorted == 1))
         
+        # Calculate True Positive Rate (TPR) = Recall = Sensitivity
+        # TPR = TP / (TP + FN) = "Of all actual positives, how many did we catch?"
+        # If denominator is 0 (no actual positives), set TPR to 0 to avoid division by zero
         tpr_val = tp / (tp + fn) if (tp + fn) > 0 else 0
+        
+        # Calculate False Positive Rate (FPR) = 1 - Specificity
+        # FPR = FP / (FP + TN) = "Of all actual negatives, how many did we incorrectly flag?"
+        # If denominator is 0 (no actual negatives), set FPR to 0 to avoid division by zero
         fpr_val = fp / (fp + tn) if (fp + tn) > 0 else 0
         
+        # Store TPR and FPR for this threshold
         tpr.append(tpr_val)
         fpr.append(fpr_val)
     
-    # Calculate AUC using trapezoidal rule
+    # Calculate AUC (Area Under Curve) using trapezoidal rule
+    # np.trapz() approximates the integral (area under curve) using trapezoids
+    # Higher AUC = better classifier (max = 1.0, random = 0.5)
     auc = np.trapz(tpr, fpr)
     
+    # Return FPR array, TPR array, and AUC score
     return np.array(fpr), np.array(tpr), auc
 
 # Get probabilities for all data points
+# Use trained model to get predicted probabilities for all inputs
+# sigmoid(w * X + b) converts raw scores to probabilities (0 to 1)
 final_probs_all = sigmoid(w * X + b)
+
+# Calculate ROC curve: returns FPR, TPR arrays, and AUC score
+# y: actual labels (0 or 1)
+# final_probs_all: predicted probabilities (0 to 1)
 fpr, tpr, auc_score = calculate_roc_curve(y, final_probs_all)
 
-print(f"AUC Score: {auc_score:.3f}")
-print("  AUC = 1.0: Perfect classifier")
-print("  AUC = 0.5: Random classifier (no better than guessing)")
-print("  AUC > 0.7: Good classifier")
+# Print AUC score with 3 decimal places
+# AUC (Area Under Curve) is a single number summarizing classifier performance
+print(f"AUC Score: {auc_score:.3f}")  # {auc_score:.3f} formats to 3 decimal places
+print("  AUC = 1.0: Perfect classifier")                    # Best possible
+print("  AUC = 0.5: Random classifier (no better than guessing)")  # Worst (random)
+print("  AUC > 0.7: Good classifier")                       # Acceptable performance
 print()
 
 # Plot ROC curve
+# plot_roc_curve creates a visualization showing:
+# - ROC curve (TPR vs FPR)
+# - Diagonal line (random classifier baseline)
+# - AUC score and shaded area
 plot_roc_curve(fpr, tpr, auc_score, title="ROC Curve for Logistic Regression Model")
 
 # Why Logistic Regression is Better

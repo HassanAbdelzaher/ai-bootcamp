@@ -161,55 +161,126 @@ print("  - Model memorizes instead of generalizing")
 print()
 
 # Create a scenario to demonstrate overfitting
-# Use a larger network and train for many epochs
+# Use a larger network and train for many epochs to show overfitting
+# Set random seed for reproducibility (same random numbers each run)
 np.random.seed(42)
-W1_overfit = np.random.randn(2, 8) * 0.1  # Larger hidden layer
+
+# Initialize weights for a larger network (more capacity = easier to overfit)
+# W1_overfit: Input layer to hidden layer weights
+# Shape: (2, 8) means 2 inputs → 8 hidden neurons (larger than original 4)
+# np.random.randn(2, 8) creates random values from standard normal distribution
+# * 0.1 scales down initial weights (smaller initial values help training)
+W1_overfit = np.random.randn(2, 8) * 0.1  # Larger hidden layer (8 neurons vs 4)
+# b1_overfit: Bias for hidden layer (8 neurons, so 8 bias values)
+# np.zeros((1, 8)) creates array of zeros with shape (1, 8)
 b1_overfit = np.zeros((1, 8))
+
+# W2_overfit: Hidden layer to output layer weights
+# Shape: (8, 1) means 8 hidden neurons → 1 output neuron
 W2_overfit = np.random.randn(8, 1) * 0.1
+# b2_overfit: Bias for output layer (1 neuron, so 1 bias value)
 b2_overfit = np.zeros((1, 1))
 
 def forward_overfit(X):
     """Forward pass for overfitting demo"""
+    # First layer: Input → Hidden
+    # Z1 = X @ W1 + b1 (matrix multiplication + bias)
+    # X shape: (4, 2), W1 shape: (2, 8) → Z1 shape: (4, 8)
     Z1 = X @ W1_overfit + b1_overfit
+    # Apply sigmoid activation to hidden layer
+    # A1 = sigmoid(Z1), shape: (4, 8)
     A1 = sigmoid(Z1)
+    
+    # Second layer: Hidden → Output
+    # Z2 = A1 @ W2 + b2 (matrix multiplication + bias)
+    # A1 shape: (4, 8), W2 shape: (8, 1) → Z2 shape: (4, 1)
     Z2 = A1 @ W2_overfit + b2_overfit
+    # Apply sigmoid activation to output layer
+    # A2 = sigmoid(Z2), shape: (4, 1)
     A2 = sigmoid(Z2)
+    
+    # Return both hidden layer activations and output predictions
     return A1, A2
 
 # Create validation set (slightly different data)
+# X_val: Add small random noise to training data to simulate slightly different test data
+# np.random.randn(*X.shape) creates random noise with same shape as X
+# * 0.05 scales the noise to be small (5% of standard deviation)
+# This simulates real-world scenario where test data is similar but not identical
 X_val = X + np.random.randn(*X.shape) * 0.05  # Add small noise
+# y_val: Copy actual labels (validation set has same labels as training)
 y_val = y.copy()
 
-train_losses = []
-val_losses = []
-lr_overfit = 0.1
+# Lists to track losses during training
+train_losses = []  # Training loss (error on training data)
+val_losses = []    # Validation loss (error on validation data)
+lr_overfit = 0.1   # Learning rate for overfitting demo
 
 print("Training with larger network (demonstrating overfitting)...")
+# Train for many epochs (10000) to show overfitting effect
 for epoch in range(10000):
-    # Training
+    # Training: Calculate loss on training data
+    # forward_overfit(X) returns (A1, A2) where A2 is predictions
+    # _ means we ignore A1 (hidden layer activations), only need predictions
     _, y_pred_train = forward_overfit(X)
+    
+    # Calculate Binary Cross-Entropy Loss for training data
+    # Loss = -mean(y * log(y_pred) + (1-y) * log(1-y_pred))
+    # 1e-9 is added to avoid log(0) which would be -infinity
     train_loss = -np.mean(y * np.log(y_pred_train + 1e-9) + (1 - y) * np.log(1 - y_pred_train + 1e-9))
+    # Store training loss for this epoch
     train_losses.append(train_loss)
     
-    # Validation
+    # Validation: Calculate loss on validation data (unseen during training)
+    # This shows how well model generalizes to new data
     _, y_pred_val = forward_overfit(X_val)
+    
+    # Calculate Binary Cross-Entropy Loss for validation data
+    # Same formula, but using validation predictions and labels
     val_loss = -np.mean(y_val * np.log(y_pred_val + 1e-9) + (1 - y_val) * np.log(1 - y_pred_val + 1e-9))
+    # Store validation loss for this epoch
     val_losses.append(val_loss)
     
-    # Backpropagation (simplified)
-    if epoch < 5000:  # Only train for first half
+    # Backpropagation (simplified) - only train for first half of epochs
+    # This simulates training that eventually leads to overfitting
+    if epoch < 5000:  # Only train for first half (5000 epochs)
+        # Calculate gradient for output layer
+        # dZ2 = prediction error (difference between prediction and actual)
         dZ2 = y_pred_train - y
-        dW2 = forward_overfit(X)[0].T @ dZ2
+        
+        # Gradient for W2 (weights from hidden to output)
+        # dW2 = A1^T @ dZ2 (transpose of hidden activations times error)
+        dW2 = forward_overfit(X)[0].T @ dZ2  # [0] gets A1 (hidden activations)
+        
+        # Gradient for b2 (bias for output layer)
+        # db2 = mean of dZ2 across all samples
+        # keepdims=True keeps the shape as (1, 1) instead of (1,)
         db2 = np.mean(dZ2, axis=0, keepdims=True)
-        dA1 = dZ2 @ W2_overfit.T
+        
+        # Backpropagate error to hidden layer
+        # dA1 = error flowing back through W2
+        dA1 = dZ2 @ W2_overfit.T  # @ is matrix multiplication, .T is transpose
+        
+        # Gradient for Z1 (before activation)
+        # dZ1 = dA1 * sigmoid_derivative(A1)
+        # sigmoid_derivative = A1 * (1 - A1)
+        # forward_overfit(X)[0] is A1 (hidden layer activations)
         dZ1 = dA1 * forward_overfit(X)[0] * (1 - forward_overfit(X)[0])
+        
+        # Gradient for W1 (weights from input to hidden)
+        # dW1 = X^T @ dZ1 (transpose of input times hidden error)
         dW1 = X.T @ dZ1
+        
+        # Gradient for b1 (bias for hidden layer)
+        # db1 = mean of dZ1 across all samples
         db1 = np.mean(dZ1, axis=0, keepdims=True)
         
-        W2_overfit -= lr_overfit * dW2
-        b2_overfit -= lr_overfit * db2
-        W1_overfit -= lr_overfit * dW1
-        b1_overfit -= lr_overfit * db1
+        # Update weights and biases using gradient descent
+        # Move in opposite direction of gradient (subtract) to reduce loss
+        W2_overfit -= lr_overfit * dW2  # Update output layer weights
+        b2_overfit -= lr_overfit * db2   # Update output layer bias
+        W1_overfit -= lr_overfit * dW1   # Update hidden layer weights
+        b1_overfit -= lr_overfit * db1   # Update hidden layer bias
 
 # Visualize overfitting
 plot_overfitting(train_losses, val_losses, 

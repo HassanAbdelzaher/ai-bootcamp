@@ -61,13 +61,33 @@ def simple_attention(Q, K, V):
     K = Key (what we're matching against)
     V = Value (what we retrieve)
     """
-    # Compute attention scores
+    # ===== STEP 1: COMPUTE ATTENTION SCORES =====
+    # Calculate similarity between queries and keys
+    # torch.matmul(Q, K.transpose(-2, -1)): Matrix multiplication
+    # Q shape: (batch, seq_len, d_model)
+    # K.transpose(-2, -1): Transpose last two dimensions
+    # Result: (batch, seq_len, seq_len) - similarity scores
     scores = torch.matmul(Q, K.transpose(-2, -1))
+    
+    # Scale scores to prevent extreme values
+    # Divide by sqrt(d_model) - standard scaling in attention
+    # Q.size(-1) gets last dimension (d_model)
+    # This prevents softmax from becoming too peaked
     scores = scores / np.sqrt(Q.size(-1))  # Scale
+    
+    # Convert scores to probabilities using softmax
+    # F.softmax(scores, dim=-1): Apply softmax along last dimension
+    # Result: (batch, seq_len, seq_len) - attention weights (sum to 1 per row)
     attention_weights = F.softmax(scores, dim=-1)
     
-    # Apply attention to values
+    # ===== STEP 2: APPLY ATTENTION TO VALUES =====
+    # Weighted sum of values based on attention weights
+    # torch.matmul(attention_weights, V): Matrix multiplication
+    # attention_weights shape: (batch, seq_len, seq_len)
+    # V shape: (batch, seq_len, d_model)
+    # Result: (batch, seq_len, d_model) - attended output
     output = torch.matmul(attention_weights, V)
+    
     return output, attention_weights
 
 # Example

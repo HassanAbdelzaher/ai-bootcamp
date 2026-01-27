@@ -40,16 +40,29 @@ print("=== 5b.2 Creating a Problem That Overfits ===")
 np.random.seed(42)
 
 # Generate training data (small dataset - prone to overfitting)
-train_size = 30
+# Small datasets are more likely to overfit because model can memorize all examples
+train_size = 30  # Only 30 samples - very small!
+# X_train: Random 2D points in range [-2, 2] for both features
+# np.random.uniform(-2, 2, (train_size, 2)) creates array of shape (30, 2)
 X_train = np.random.uniform(-2, 2, (train_size, 2))
-# True function: XOR-like with some noise
+
+# True function: XOR-like pattern with some noise
+# XOR pattern: (x1 > 0) XOR (x2 > 0) - creates checkerboard pattern
+# ^ is XOR operator: True if exactly one condition is True
+# .astype(float) converts True/False to 1.0/0.0
 y_train = ((X_train[:, 0] > 0) ^ (X_train[:, 1] > 0)).astype(float)
-y_train += np.random.normal(0, 0.1, train_size)  # Add noise
+# Add noise to make problem harder (simulates real-world data)
+# np.random.normal(0, 0.1, train_size) adds Gaussian noise (mean=0, std=0.1)
+y_train += np.random.normal(0, 0.1, train_size)
+# Clip values to [0, 1] range (since we're doing binary classification)
 y_train = np.clip(y_train, 0, 1)
 
 # Generate validation data (larger, cleaner)
-val_size = 100
+# Validation set is larger and has no noise - represents "true" distribution
+val_size = 100  # 100 samples - larger than training set
+# X_val: Random 2D points in same range as training
 X_val = np.random.uniform(-2, 2, (val_size, 2))
+# y_val: Same XOR pattern but NO noise (clean labels)
 y_val = ((X_val[:, 0] > 0) ^ (X_val[:, 1] > 0)).astype(float)
 
 print(f"Training set: {train_size} samples (small, with noise)")
@@ -69,12 +82,24 @@ def sigmoid(z):
 
 def forward_pass(X, W1, b1, W2, b2, W3, b3):
     """Forward pass through 3-layer network"""
+    # Layer 1: Input → Hidden Layer 1
+    # Z1 = X @ W1 + b1: Matrix multiplication + bias
+    # X shape: (samples, 2), W1 shape: (2, hidden1_size) → Z1 shape: (samples, hidden1_size)
     Z1 = X @ W1 + b1
+    # Apply sigmoid activation to get probabilities
     A1 = sigmoid(Z1)
+    
+    # Layer 2: Hidden Layer 1 → Hidden Layer 2
+    # Z2 = A1 @ W2 + b2: Hidden layer 1 activations → hidden layer 2
     Z2 = A1 @ W2 + b2
     A2 = sigmoid(Z2)
+    
+    # Layer 3: Hidden Layer 2 → Output
+    # Z3 = A2 @ W3 + b3: Final layer to output
     Z3 = A2 @ W3 + b3
     A3 = sigmoid(Z3)
+    
+    # Return output and intermediate activations (for backpropagation)
     return A3, A1, A2
 
 def binary_cross_entropy(y, y_pred):
@@ -83,18 +108,33 @@ def binary_cross_entropy(y, y_pred):
     return -np.mean(y * np.log(y_pred + epsilon) + (1 - y) * np.log(1 - y_pred + epsilon))
 
 # Create a large network (prone to overfitting)
-input_size = 2
-hidden1_size = 20  # Large hidden layer
-hidden2_size = 15
-output_size = 1
+# Large networks have many parameters and can memorize training data
+input_size = 2        # 2 input features
+hidden1_size = 20     # Large hidden layer (20 neurons) - many parameters!
+hidden2_size = 15     # Second hidden layer (15 neurons)
+output_size = 1       # Single output (binary classification)
 
 # Initialize weights
+# Set random seed for reproducibility (same initial weights each run)
 np.random.seed(42)
+
+# W1: Weights from input to first hidden layer
+# Shape: (2, 20) - 2 inputs → 20 neurons
+# * 0.5 scales down initial weights (smaller values help training)
 W1 = np.random.randn(input_size, hidden1_size) * 0.5
+# b1: Bias for first hidden layer (one per neuron)
 b1 = np.zeros((1, hidden1_size))
+
+# W2: Weights from first hidden layer to second hidden layer
+# Shape: (20, 15) - 20 neurons → 15 neurons
 W2 = np.random.randn(hidden1_size, hidden2_size) * 0.5
+# b2: Bias for second hidden layer
 b2 = np.zeros((1, hidden2_size))
+
+# W3: Weights from second hidden layer to output
+# Shape: (15, 1) - 15 neurons → 1 output
 W3 = np.random.randn(hidden2_size, output_size) * 0.5
+# b3: Bias for output layer
 b3 = np.zeros((1, output_size))
 
 # Training parameters
@@ -110,14 +150,24 @@ print()
 print("Training...")
 
 for epoch in range(epochs):
-    # Forward pass on training data
+    # ===== FORWARD PASS ON TRAINING DATA =====
+    # Make predictions on training set using current weights
+    # forward_pass returns (output, hidden1_activations, hidden2_activations)
+    # We only need output, so use _ for intermediate activations
     train_pred, _, _ = forward_pass(X_train, W1, b1, W2, b2, W3, b3)
+    # Calculate loss on training data
+    # .flatten() converts 2D array to 1D (required by loss function)
     train_loss = binary_cross_entropy(y_train, train_pred.flatten())
+    # Store training loss for visualization
     train_losses.append(train_loss)
     
-    # Forward pass on validation data (no training, just evaluation)
+    # ===== FORWARD PASS ON VALIDATION DATA =====
+    # Evaluate on validation set (no training, just checking performance)
+    # This shows how well model generalizes to unseen data
     val_pred, _, _ = forward_pass(X_val, W1, b1, W2, b2, W3, b3)
+    # Calculate loss on validation data
     val_loss = binary_cross_entropy(y_val, val_pred.flatten())
+    # Store validation loss for visualization
     val_losses.append(val_loss)
     
     # Backward pass (simplified - only on training data)

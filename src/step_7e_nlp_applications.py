@@ -70,10 +70,24 @@ import re
 def simple_tokenize(text):
     """Simple word tokenization"""
     # Convert to lowercase
+    # .lower() converts all characters to lowercase
+    # This ensures "Hello" and "hello" are treated as same word
     text = text.lower()
+    
     # Remove punctuation (keep apostrophes for contractions)
+    # re.sub(pattern, replacement, string): Replace pattern with replacement
+    # r'[^\w\s\']': Regular expression pattern
+    #   [^...]: Match anything NOT in brackets
+    #   \w: Word characters (letters, digits, underscore)
+    #   \s: Whitespace characters
+    #   \': Apostrophe (for contractions like "I'm")
+    #   So this matches anything that's NOT a word char, space, or apostrophe
+    # ' ': Replace with space (removes punctuation)
     text = re.sub(r'[^\w\s\']', ' ', text)
+    
     # Split on whitespace
+    # .split() splits string into list of words (separated by spaces)
+    # Removes multiple spaces and creates clean word list
     tokens = text.split()
     return tokens
 
@@ -92,9 +106,16 @@ print("  • Example: 'learning' → ['learn', '##ing']")
 print()
 
 # Create vocabulary
+# Vocabulary: Dictionary mapping words to unique indices
+# This converts words to numbers (required for neural networks)
 vocab = {}
+# Iterate through all tokens
 for token in better_tokens:
+    # If token not seen before, add it to vocabulary
+    # if token not in vocab: Check if word is already in dictionary
     if token not in vocab:
+        # Assign unique index: len(vocab) gives next available index
+        # First word gets index 0, second gets 1, etc.
         vocab[token] = len(vocab)
 
 print(f"Vocabulary size: {len(vocab)}")

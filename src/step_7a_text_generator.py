@@ -158,20 +158,53 @@ print("  - Useful for understanding what the model learned")
 print()
 
 # Extract embeddings from the trained model
+# model.eval() sets model to evaluation mode (disables dropout, batch norm updates)
+# This ensures consistent behavior when extracting embeddings
 model.eval()
+
+# Get embedding weights from the model
+# model.embedding is the embedding layer (nn.Embedding)
+# .weight accesses the weight tensor (vocab_size × embedding_dim)
+# .data gets the underlying tensor data
+# .cpu() moves tensor from GPU to CPU (if on GPU)
+# .numpy() converts PyTorch tensor to NumPy array (for visualization)
 embedding_weights = model.embedding.weight.data.cpu().numpy()
+# Shape: (vocab_size, hidden_size) - each row is an embedding vector for one character
 
 # Select a subset of characters to visualize
+# Choose interesting characters: vowels and common consonants
+# This makes visualization more meaningful than all characters
 sample_chars = ['a', 'e', 'i', 'o', 'u', 't', 'n', 's', 'r', 'h', 'd', 'l', 'c', 'm', 'f', 'p']
+
+# Get indices for selected characters
+# List comprehension: for each char in sample_chars, get its index if it exists in char_to_idx
+# char_to_idx is the dictionary mapping characters to indices
+# Only include characters that exist in the vocabulary
 sample_indices = [char_to_idx[char] for char in sample_chars if char in char_to_idx]
+
+# Extract embeddings for selected characters
+# sample_indices are row indices into embedding_weights
+# This selects only the embedding vectors for our sample characters
 sample_embeddings = embedding_weights[sample_indices]
+# Shape: (len(sample_indices), hidden_size) - embeddings for selected characters
+
+# Get list of characters that actually exist in vocabulary
+# Filter sample_chars to only include those in char_to_idx
 sample_words = [char for char in sample_chars if char in char_to_idx]
 
+# Print information about what we're visualizing
+# {len(sample_words)} gets number of characters being visualized
 print(f"Visualizing embeddings for {len(sample_words)} characters")
+# ', '.join(sample_words) creates comma-separated string of characters
 print(f"Characters: {', '.join(sample_words)}")
 print()
 
 # Visualize embeddings
+# plot_word_embeddings creates a 2D scatter plot of embeddings
+# Uses PCA (Principal Component Analysis) to reduce high-dimensional embeddings to 2D
+# sample_embeddings: The embedding vectors to visualize
+# words: Character labels to display on plot
+# title: Plot title
 plot_word_embeddings(sample_embeddings, words=sample_words, 
                     title="Character Embeddings Visualization (2D Projection)")
 
@@ -182,7 +215,7 @@ print("  - Model learns relationships between characters")
 print()
 
 # 7a.7 Generate Text
-print("=== 7a.6 Generate Text ===")
+print("=== 7a.7 Generate Text ===")
 def generate_text(model, start_text, length=100, temperature=0.8):
     """Generate text given a starting sequence"""
     model.eval()

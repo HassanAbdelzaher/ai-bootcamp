@@ -228,46 +228,89 @@ print("  - Prevents overfitting (memorizing training data)")
 print()
 
 # Create a larger dataset for demonstration
+# We need more data points to properly demonstrate train/test split
+# X_full: Input features (study hours) - 8 data points
 X_full = np.array([1, 2, 3, 4, 5, 6, 7, 8], dtype=float)
+# y_full: Target values (exam scores) - corresponding scores for each hour
+# Each hour adds 10 points: 50, 60, 70, 80, 90, 100, 110, 120
 y_full = np.array([50, 60, 70, 80, 90, 100, 110, 120], dtype=float)
 
 # Split: 75% train, 25% test
-split_idx = int(len(X_full) * 0.75)
-X_train = X_full[:split_idx]
-y_train = y_full[:split_idx]
-X_test = X_full[split_idx:]
-y_test = y_full[split_idx:]
+# Calculate the split index: 75% of 8 = 6 samples for training
+# int() converts float to integer (6.0 becomes 6)
+split_idx = int(len(X_full) * 0.75)  # len(X_full) = 8, so 8 * 0.75 = 6.0, int(6.0) = 6
 
-print(f"Training set: {len(X_train)} samples")
-print(f"Test set: {len(X_test)} samples")
+# Training set: First 6 samples (indices 0 to 5)
+# [:split_idx] means "from start to split_idx" (exclusive of split_idx)
+X_train = X_full[:split_idx]  # Gets [1, 2, 3, 4, 5, 6]
+y_train = y_full[:split_idx]   # Gets [50, 60, 70, 80, 90, 100]
+
+# Test set: Remaining samples (indices 6 to 7)
+# [split_idx:] means "from split_idx to end" (inclusive of split_idx)
+X_test = X_full[split_idx:]  # Gets [7, 8]
+y_test = y_full[split_idx:]  # Gets [110, 120]
+
+# Print split information
+# f-string allows embedding variables in strings
+# {len(X_train)} gets replaced with the actual length (6)
+print(f"Training set: {len(X_train)} samples")  # Prints: "Training set: 6 samples"
+print(f"Test set: {len(X_test)} samples")        # Prints: "Test set: 2 samples"
 print()
 
 # Train model on training set only
-w_train = 0.0
-b_train = 0.0
-lr = 0.01
+# Initialize weights and bias to zero (fresh start)
+w_train = 0.0  # Weight (slope) - starts at zero
+b_train = 0.0  # Bias (y-intercept) - starts at zero
+lr = 0.01      # Learning rate - controls step size during training
 
+# Training loop: Repeat 1000 times
 for epoch in range(1000):
+    # FORWARD PASS: Make predictions using current weights
+    # y_pred_train = w * X_train + b (applied to all training samples)
+    # This calculates predicted scores for all training data points
     y_pred_train = w_train * X_train + b_train
+    
+    # CALCULATE GRADIENTS: How to adjust weights to reduce error
+    # Gradient for weight: average((prediction - actual) × input)
+    # This tells us: if we increase w, how much will error change?
     dw = np.mean((y_pred_train - y_train) * X_train)
+    
+    # Gradient for bias: average(prediction - actual)
+    # This tells us: if we increase b, how much will error change?
     db = np.mean(y_pred_train - y_train)
-    w_train -= lr * dw
-    b_train -= lr * db
+    
+    # UPDATE WEIGHTS: Move in opposite direction of gradient (to reduce error)
+    # w = w - learning_rate * gradient
+    # Subtracting because we want to move in direction that reduces error
+    w_train -= lr * dw  # Update weight: w = w - 0.01 * dw
+    b_train -= lr * db  # Update bias: b = b - 0.01 * db
 
 # Make predictions on both sets
-y_pred_train_final = w_train * X_train + b_train
-y_pred_test_final = w_train * X_test + b_test
+# After training, use learned weights to predict on both training and test data
+# Training predictions: How well does model fit training data?
+y_pred_train_final = w_train * X_train + b_train  # Predictions on training set
+# Test predictions: How well does model generalize to unseen data?
+y_pred_test_final = w_train * X_test + b_test     # Predictions on test set
 
 # Calculate errors
+# Mean Squared Error (MSE): average((prediction - actual)²)
+# Training error: Error on data the model was trained on
 train_error = np.mean((y_pred_train_final - y_train) ** 2)
+# Test error: Error on data the model has never seen (more important!)
 test_error = np.mean((y_pred_test_final - y_test) ** 2)
 
-print(f"Training MSE: {train_error:.2f}")
-print(f"Test MSE: {test_error:.2f}")
+# Print error metrics
+# {train_error:.2f} formats the number to 2 decimal places
+print(f"Training MSE: {train_error:.2f}")  # Should be very low (model fits training data)
+print(f"Test MSE: {test_error:.2f}")        # Should be similar to training error (good generalization)
 print("  Good models have similar train and test errors")
 print()
 
 # Visualize train/test split
+# plot_train_test_split creates a scatter plot showing:
+# - Training data (blue circles)
+# - Test data (red squares)
+# - Model predictions (dashed lines)
 plot_train_test_split(X_train, y_train, X_test, y_test, 
                      y_pred_train_final, y_pred_test_final,
                      xlabel="Study Hours", ylabel="Exam Score",

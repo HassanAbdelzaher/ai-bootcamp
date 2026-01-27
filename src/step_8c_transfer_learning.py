@@ -50,17 +50,32 @@ print()
 print("=== 8c.3 Create Simple Dataset ===")
 def create_simple_data(num_samples=200, img_size=224, num_classes=3):
     """Create simple 3-class dataset"""
-    X = []
-    y = []
+    # Lists to store images and labels
+    X = []  # Images
+    y = []  # Class labels
     
     for i in range(num_samples):
+        # Create random color image (3 channels: RGB)
+        # np.random.rand(3, img_size, img_size) creates random values in [0, 1)
+        # Shape: (3, 224, 224) - 224x224 is ImageNet standard size
+        # .astype(np.float32) converts to 32-bit float (PyTorch compatible)
         img = np.random.rand(3, img_size, img_size).astype(np.float32)
+        
+        # Assign class based on sample index
+        # i % num_classes: Cycles through classes (0, 1, 2, 0, 1, 2, ...)
         class_id = i % num_classes
-        # Add class-specific pattern
+        
+        # Add class-specific pattern to make classification possible
+        # img[class_id, :, :]: Selects one channel based on class
+        # += 0.5: Adds 0.5 to all pixels in that channel (makes it brighter)
+        # This creates distinguishable patterns for each class
         img[class_id, :, :] += 0.5
+        
+        # Store image and label
         X.append(img)
         y.append(class_id)
     
+    # Convert lists to NumPy arrays
     return np.array(X), np.array(y)
 
 X, y = create_simple_data(num_samples=200, img_size=224, num_classes=3)
@@ -92,6 +107,10 @@ class PretrainedFeatureExtractor(nn.Module):
         )
     
     def forward(self, x):
+        # Forward pass through feature extractor
+        # x shape: (batch, 3, 224, 224) - input images
+        # Returns: (batch, 256, 1, 1) - extracted features
+        # These features can be used for classification
         return self.features(x)
 
 # Create pre-trained feature extractor
@@ -125,25 +144,39 @@ class TransferLearningModel(nn.Module):
         super(TransferLearningModel, self).__init__()
         
         # Use pre-trained features (frozen)
+        # This is the feature extractor from the pre-trained model
+        # It knows how to extract useful features from images
         self.features = pretrained_features
         
         # Freeze pre-trained layers
+        # param.requires_grad = False: Disable gradient computation
+        # This means these layers won't be updated during training
+        # We keep the learned features and only train the new classifier
         for param in self.features.parameters():
             param.requires_grad = False
         
         # New classifier for our task
+        # This is what we'll train - adapts pre-trained features to our classes
         self.classifier = nn.Sequential(
-            nn.Linear(256, 128),
-            nn.ReLU(),
-            nn.Dropout(0.5),
-            nn.Linear(128, num_classes)
+            nn.Linear(256, 128),    # 256 features → 128 hidden units
+            nn.ReLU(),               # Activation function
+            nn.Dropout(0.5),         # Dropout for regularization (50% chance)
+            nn.Linear(128, num_classes)  # 128 → num_classes (final classification)
         )
     
     def forward(self, x):
         # Extract features using pre-trained model
+        # x shape: (batch, 3, 224, 224) - input images
+        # features shape: (batch, 256, 1, 1) - extracted features
         features = self.features(x)
+        
+        # Flatten features for fully connected layers
+        # features.view(features.size(0), -1) reshapes to (batch, 256)
+        # features.size(0) gets batch size, -1 flattens remaining dimensions
         features = features.view(features.size(0), -1)  # Flatten
+        
         # Classify with new layers
+        # output shape: (batch, num_classes) - class probabilities
         output = self.classifier(features)
         return output
 

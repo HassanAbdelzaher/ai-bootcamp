@@ -44,8 +44,20 @@ np.random.seed(42)
 torch.manual_seed(42)
 
 # Generate synthetic data
+# num_samples: Number of data points to create
 num_samples = 200
+# X: Input features - random 2D points
+# torch.randn(num_samples, 2) creates random values from standard normal distribution
+# * 2 scales the values (makes them larger, range approximately -4 to +4)
+# Shape: (200, 2) - 200 samples, 2 features
 X = torch.randn(num_samples, 2) * 2
+
+# y: Target labels - XOR pattern (non-linear, requires hidden layers)
+# (X[:, 0] > 0) creates boolean tensor: True if first feature > 0
+# (X[:, 1] > 0) creates boolean tensor: True if second feature > 0
+# ^ is XOR operator: True if exactly one is True
+# .float() converts boolean to float (True→1.0, False→0.0)
+# .unsqueeze(1) adds dimension: (200,) → (200, 1) for compatibility
 y = ((X[:, 0] > 0) ^ (X[:, 1] > 0)).float().unsqueeze(1)
 
 print(f"Dataset: {num_samples} samples, 2 features")
@@ -78,39 +90,71 @@ print("=== 6b.4 Training Function ===")
 
 def train_with_optimizer(optimizer_name, optimizer_class, lr=0.01, epochs=1000):
     """Train model with specified optimizer"""
+    # Create fresh model for this optimizer (start from scratch)
     model = create_model()
+    # Binary Cross-Entropy Loss for binary classification
     loss_fn = nn.BCELoss()
     
-    # Create optimizer
+    # Create optimizer based on type
+    # Different optimizers have different parameters
     if optimizer_name == "SGD":
+        # SGD: Simple gradient descent
+        # lr: Learning rate (step size)
         optimizer = optimizer_class(model.parameters(), lr=lr)
     elif optimizer_name == "SGD-Momentum":
+        # SGD with Momentum: Adds velocity to gradient descent
+        # momentum=0.9: How much of previous gradient to keep (0.9 = 90%)
+        # Helps overcome local minima and speeds up convergence
         optimizer = optimizer_class(model.parameters(), lr=lr, momentum=0.9)
     elif optimizer_name == "Adam":
+        # Adam: Adaptive Moment Estimation
+        # Automatically adjusts learning rate per parameter
+        # Good default choice for most problems
         optimizer = optimizer_class(model.parameters(), lr=lr)
     elif optimizer_name == "RMSprop":
+        # RMSprop: Root Mean Square Propagation
+        # Adaptive learning rates (simpler than Adam)
         optimizer = optimizer_class(model.parameters(), lr=lr)
     else:
+        # Default: Use provided optimizer class with learning rate
         optimizer = optimizer_class(model.parameters(), lr=lr)
     
+    # List to store loss values for each epoch
     losses = []
     
+    # Training loop
     for epoch in range(epochs):
-        # Forward pass
-        y_pred = model(X)
-        loss = loss_fn(y_pred, y)
+        # ===== FORWARD PASS =====
+        # Make predictions using current model weights
+        y_pred = model(X)  # Shape: (200, 1) - probabilities for each sample
+        # Calculate loss: how wrong are our predictions?
+        loss = loss_fn(y_pred, y)  # Compare predictions with actual labels
+        # Store loss value (convert tensor to Python float)
         losses.append(loss.item())
         
-        # Backward pass
+        # ===== BACKWARD PASS =====
+        # optimizer.zero_grad(): Clear gradients from previous iteration
+        # PyTorch accumulates gradients, so we need to reset them
         optimizer.zero_grad()
+        # loss.backward(): Calculate gradients (derivatives)
+        # This computes how much each parameter affects the loss
         loss.backward()
+        # optimizer.step(): Update weights using gradients
+        # Each optimizer uses different update rule (SGD, Adam, etc.)
         optimizer.step()
     
-    # Final accuracy
+    # ===== EVALUATE FINAL MODEL =====
+    # torch.no_grad(): Disable gradient computation (faster, uses less memory)
+    # We don't need gradients for evaluation
     with torch.no_grad():
+        # Make predictions: convert probabilities to binary (>= 0.5 = 1, else 0)
         predictions = (model(X) >= 0.5).float()
+        # Calculate accuracy: percentage of correct predictions
+        # (predictions == y) creates boolean tensor: True where predictions match
+        # .float() converts to 0.0/1.0, .mean() calculates average, .item() gets scalar
         accuracy = (predictions == y).float().mean().item()
     
+    # Return loss history and final accuracy
     return losses, accuracy
 
 print("Training function created")
@@ -123,22 +167,36 @@ print("=== 6b.5 Comparing Optimizers ===")
 print("Training with different optimizers...")
 print()
 
+# Dictionary to store results for each optimizer
 results = {}
+
+# List of optimizers to test
+# Each tuple: (name, optimizer_class, learning_rate)
+# Note: Different optimizers work best with different learning rates!
 optimizers_to_test = [
-    ("SGD", optim.SGD, 0.1),
-    ("SGD-Momentum", optim.SGD, 0.1),
-    ("Adam", optim.Adam, 0.001),
-    ("RMSprop", optim.RMSprop, 0.001),
+    ("SGD", optim.SGD, 0.1),           # SGD needs higher learning rate
+    ("SGD-Momentum", optim.SGD, 0.1),   # Same as SGD but with momentum
+    ("Adam", optim.Adam, 0.001),       # Adam works well with lower learning rate
+    ("RMSprop", optim.RMSprop, 0.001), # RMSprop also prefers lower learning rate
 ]
 
+# Test each optimizer
 for opt_name, opt_class, lr in optimizers_to_test:
     print(f"Training with {opt_name} (lr={lr})...")
+    # Train model with this optimizer
+    # Returns: (loss_history, final_accuracy)
     losses, accuracy = train_with_optimizer(opt_name, opt_class, lr=lr, epochs=1000)
+    
+    # Store results in dictionary
     results[opt_name] = {
-        'losses': losses,
-        'accuracy': accuracy,
-        'final_loss': losses[-1]
+        'losses': losses,           # List of loss values for each epoch
+        'accuracy': accuracy,       # Final accuracy (0.0 to 1.0)
+        'final_loss': losses[-1]    # Last loss value (losses[-1] gets last element)
     }
+    
+    # Print results
+    # {losses[-1]:.4f} formats loss to 4 decimal places
+    # {accuracy*100:.1f}% converts accuracy to percentage with 1 decimal
     print(f"  Final loss: {losses[-1]:.4f}, Accuracy: {accuracy*100:.1f}%")
 print()
 

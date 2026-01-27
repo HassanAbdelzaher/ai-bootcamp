@@ -71,8 +71,26 @@ class SimpleGenerator(nn.Module):
     
     def forward(self, z):
         # z: random noise (batch, latent_dim)
+        # z shape: (batch, 100) - random vector (latent code)
+        # This is the "seed" that generates the image
+        
+        # Step 1: Expand noise to larger feature map
+        # self.fc(z): Fully connected layer expands noise
+        # Input: (batch, 100) → Output: (batch, 256*4*4) = (batch, 4096)
         x = self.fc(z)
+        
+        # Step 2: Reshape to image-like tensor
+        # x.view(x.size(0), 256, 4, 4): Reshape to (batch, 256, 4, 4)
+        # x.size(0): Batch size
+        # 256: Number of channels
+        # 4, 4: Height and width (small starting size)
+        # This creates a small feature map that we'll upsample
         x = x.view(x.size(0), 256, 4, 4)
+        
+        # Step 3: Upsample through transposed convolutions
+        # self.conv_layers: Series of ConvTranspose2d layers
+        # Each layer doubles the size: 4x4 → 8x8 → 16x16 → 32x32 → 64x64
+        # Result: (batch, img_channels, 64, 64) - generated image
         x = self.conv_layers(x)
         return x
 

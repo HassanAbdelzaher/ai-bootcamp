@@ -63,17 +63,41 @@ def create_detection_data(num_samples=100, img_size=128):
         size = np.random.randint(20, 40)
         
         # Create bounding box
+        # Bounding box format: (x_min, y_min, x_max, y_max)
+        # Calculate box coordinates from center and size
+        # center_x - size // 2: Left edge of box
+        # max(0, ...): Ensure box doesn't go outside image (left boundary)
         x_min = max(0, center_x - size // 2)
+        # center_y - size // 2: Top edge of box
+        # max(0, ...): Ensure box doesn't go outside image (top boundary)
         y_min = max(0, center_y - size // 2)
+        # center_x + size // 2: Right edge of box
+        # min(img_size, ...): Ensure box doesn't go outside image (right boundary)
         x_max = min(img_size, center_x + size // 2)
+        # center_y + size // 2: Bottom edge of box
+        # min(img_size, ...): Ensure box doesn't go outside image (bottom boundary)
         y_max = min(img_size, center_y + size // 2)
         
-        # Draw object
+        # Draw object on image
         if obj_type == 0:  # Square
+            # Draw filled square
+            # img[:, y_min:y_max, x_min:x_max]: All channels, rows y_min to y_max, cols x_min to x_max
+            # = 1.0: Set all pixels in box to white (1.0)
             img[:, y_min:y_max, x_min:x_max] = 1.0
         else:  # Circle
+            # Create coordinate grids for circle
+            # np.ogrid creates open grids for efficient array operations
             y_coords, x_coords = np.ogrid[:img_size, :img_size]
+            
+            # Create circular mask
+            # (x_coords - center_x)**2 + (y_coords - center_y)**2: Distance squared from center
+            # <= (size//2)**2: Points within radius size//2
+            # mask: Boolean array, True for points inside circle
             mask = ((x_coords - center_x)**2 + (y_coords - center_y)**2) <= (size//2)**2
+            
+            # Draw filled circle
+            # img[:, mask]: All channels, pixels where mask is True
+            # = 1.0: Set all pixels in circle to white (1.0)
             img[:, mask] = 1.0
         
         X.append(img)

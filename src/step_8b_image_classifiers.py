@@ -40,24 +40,56 @@ def create_classification_data(num_classes=5, samples_per_class=100, img_size=64
             # Create class-specific pattern
             img = np.zeros((1, img_size, img_size), dtype=np.float32)
             
-            # Add class-specific features
-            center = img_size // 2
-            if class_id == 0:  # Circle
+            # Add class-specific features (different pattern for each class)
+            # center: Middle point of image (for circular patterns)
+            center = img_size // 2  # Integer division: 64 // 2 = 32
+            
+            if class_id == 0:  # Circle pattern
+                # Create coordinate grids
+                # np.ogrid creates open grids for efficient array operations
+                # y_coords: row indices (0 to img_size-1)
+                # x_coords: column indices (0 to img_size-1)
                 y_coords, x_coords = np.ogrid[:img_size, :img_size]
+                
+                # Create circular mask
+                # (x_coords - center)**2 + (y_coords - center)**2: Distance squared from center
+                # <= (img_size//4)**2: Points within radius img_size//4
+                # mask: Boolean array, True for points inside circle
                 mask = (x_coords - center)**2 + (y_coords - center)**2 <= (img_size//4)**2
+                
+                # Set pixels inside circle to 1.0 (white)
+                # img[0][mask]: Select channel 0, then apply mask
                 img[0][mask] = 1.0
-            elif class_id == 1:  # Square
-                margin = img_size // 4
+                
+            elif class_id == 1:  # Square pattern
+                # margin: Distance from edges
+                margin = img_size // 4  # 64 // 4 = 16
+                # img[0, margin:-margin, margin:-margin]: Select channel 0, then square region
+                # margin:-margin means from margin to (img_size - margin)
+                # Creates filled square in center
                 img[0, margin:-margin, margin:-margin] = 1.0
-            elif class_id == 2:  # Horizontal lines
+                
+            elif class_id == 2:  # Horizontal lines pattern
+                # Draw horizontal lines every 8 pixels
+                # range(0, img_size, 8): [0, 8, 16, 24, 32, 40, 48, 56]
                 for i in range(0, img_size, 8):
+                    # img[0, i, :]: Channel 0, row i, all columns
+                    # Sets entire row i to 1.0 (horizontal line)
                     img[0, i, :] = 1.0
-            elif class_id == 3:  # Vertical lines
+                    
+            elif class_id == 3:  # Vertical lines pattern
+                # Draw vertical lines every 8 pixels
                 for i in range(0, img_size, 8):
+                    # img[0, :, i]: Channel 0, all rows, column i
+                    # Sets entire column i to 1.0 (vertical line)
                     img[0, :, i] = 1.0
-            else:  # Diagonal
+                    
+            else:  # Diagonal pattern (class_id == 4)
+                # Draw diagonal line from top-left to bottom-right
                 for i in range(img_size):
-                    if i < img_size:
+                    # img[0, i, i]: Channel 0, row i, column i (diagonal)
+                    # Sets pixel at (i, i) to 1.0
+                    if i < img_size:  # Safety check (always true, but good practice)
                         img[0, i, i] = 1.0
             
             X.append(img)

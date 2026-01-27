@@ -145,54 +145,99 @@ print("  - Resume training from checkpoints")
 print()
 
 # Save the model
+# Define file path where model will be saved
+# .pth extension is standard for PyTorch checkpoint files
 model_path = "xor_model.pth"
+
+# torch.save() saves data to a file
+# First argument: Dictionary containing what to save
+#   - 'model_state_dict': All model weights and biases (learned parameters)
+#   - 'optimizer_state_dict': Optimizer state (learning rate, momentum, etc.)
+#   - 'loss': Final training loss (for reference)
+# Second argument: File path where to save
 torch.save({
-    'model_state_dict': model.state_dict(),
-    'optimizer_state_dict': optimizer.state_dict(),
-    'loss': losses[-1],
+    'model_state_dict': model.state_dict(),        # model.state_dict() returns dict of all weights
+    'optimizer_state_dict': optimizer.state_dict(), # optimizer.state_dict() returns optimizer state
+    'loss': losses[-1],                             # losses[-1] gets last element (final loss)
 }, model_path)
+
 print(f"✅ Model saved to {model_path}")
 print(f"   - Model weights: {model_path}")
+# Calculate file size: sum of all parameters * 4 bytes (float32) / 1024 (KB)
+# p.numel() returns number of elements in parameter tensor
+# 4 bytes per float32 parameter
+# / 1024 converts bytes to KB
+# {:.1f} formats to 1 decimal place
 print(f"   - File size: ~{sum(p.numel() * 4 for p in model.parameters()) / 1024:.1f} KB")
 print()
 
 # Create a new model instance
 print("Creating a new model instance (untrained)...")
+# Create a fresh model with same architecture as original
+# This model has random (untrained) weights
 new_model = nn.Sequential(
-    nn.Linear(2, 4),
-    nn.ReLU(),
-    nn.Linear(4, 1),
-    nn.Sigmoid()
+    nn.Linear(2, 4),   # Input layer: 2 features → 4 neurons
+    nn.ReLU(),         # Activation function
+    nn.Linear(4, 1),   # Hidden layer: 4 neurons → 1 output
+    nn.Sigmoid()       # Output activation (probability)
 )
 
 # Test new model (should be random)
+# torch.no_grad() disables gradient computation (faster, uses less memory)
+# Use this during inference (prediction) when you don't need gradients
 with torch.no_grad():
-    new_probs = new_model(X)
+    # Make predictions with untrained model
+    new_probs = new_model(X)  # Get probabilities (should be random ~0.5)
+    # Convert probabilities to binary predictions (>= 0.5 = 1, else 0)
+    # .int() converts True/False to 1/0
     new_preds = (new_probs >= 0.5).int()
+    # Calculate accuracy: compare predictions with actual labels
+    # (new_preds == y.int()) creates boolean tensor (True where match)
+    # .float() converts True/False to 1.0/0.0
+    # .mean() calculates average (accuracy)
+    # .item() extracts scalar value from tensor
     new_accuracy = (new_preds == y.int()).float().mean().item()
+
+# Print accuracy (should be around 50% - random guessing)
+# {new_accuracy:.2%} formats as percentage with 2 decimal places
 print(f"New model accuracy (before loading): {new_accuracy:.2%}")
 print("  This is random because the model hasn't been trained yet")
 print()
 
 # Load the saved model
 print(f"Loading model from {model_path}...")
+# torch.load() loads data from file
+# Returns the dictionary we saved earlier
 checkpoint = torch.load(model_path)
+
+# Load model weights into new model
+# checkpoint['model_state_dict'] gets the saved weights dictionary
+# load_state_dict() copies weights from dictionary into model
 new_model.load_state_dict(checkpoint['model_state_dict'])
 print("✅ Model loaded successfully!")
 print()
 
 # Test loaded model (should match original)
+# Now the model should have same weights as original trained model
 with torch.no_grad():
-    loaded_probs = new_model(X)
+    # Make predictions with loaded model
+    loaded_probs = new_model(X)  # Get probabilities (should match original)
+    # Convert to binary predictions
     loaded_preds = (loaded_probs >= 0.5).int()
+    # Calculate accuracy (should be 100% like original)
     loaded_accuracy = (loaded_preds == y.int()).float().mean().item()
+
+# Print accuracy (should be 100% - same as original trained model)
 print(f"Loaded model accuracy: {loaded_accuracy:.2%}")
 print("  This matches the original trained model!")
 print()
 
 # Clean up
-import os
+# Remove the saved model file to keep workspace clean
+import os  # Import os module for file operations
+# os.path.exists() checks if file exists
 if os.path.exists(model_path):
+    # os.remove() deletes the file
     os.remove(model_path)
     print(f"Cleaned up: Removed {model_path}")
 print()

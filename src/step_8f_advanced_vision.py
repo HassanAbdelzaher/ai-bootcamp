@@ -61,20 +61,49 @@ np.random.seed(42)
 img_size = 32
 
 # Create simple image with different regions
+# image shape: (img_size, img_size, 3) - RGB image
+# np.zeros(): Initialize with zeros (black image)
 image = np.zeros((img_size, img_size, 3))
-# Sky region (top)
-image[:img_size//3, :, 0] = 0.5  # Blue
+
+# Sky region (top third of image)
+# image[:img_size//3, :, 0]: Top third, all columns, channel 0 (Red)
+# = 0.5: Set red channel to 0.5 (medium intensity)
+image[:img_size//3, :, 0] = 0.5  # Blue (low red)
+# image[:img_size//3, :, 2]: Top third, all columns, channel 2 (Blue)
+# = 0.8: Set blue channel to 0.8 (high intensity)
+# Result: Blue sky (low red, high blue)
 image[:img_size//3, :, 2] = 0.8
-# Ground region (bottom)
+
+# Ground region (bottom two-thirds of image)
+# image[img_size//3:, :, 1]: From row img_size//3 to end, all columns, channel 1 (Green)
+# = 0.6: Set green channel to 0.6 (medium-high intensity)
+# Result: Green ground
 image[img_size//3:, :, 1] = 0.6  # Green
+
 # Object (circle in middle)
-center = img_size // 2
-radius = img_size // 6
+# center: Center point of image
+center = img_size // 2  # 32 // 2 = 16
+# radius: Radius of circle
+radius = img_size // 6  # 32 // 6 ≈ 5
+
+# Create coordinate grids
+# np.ogrid creates open grids for efficient array operations
 y, x = np.ogrid[:img_size, :img_size]
+
+# Create circular mask
+# (x - center)**2 + (y - center)**2: Distance squared from center
+# <= radius**2: Points within circle
+# mask: Boolean array, True for points inside circle
 mask = (x - center)**2 + (y - center)**2 <= radius**2
-image[mask, 0] = 1.0  # Red object
-image[mask, 1] = 0.0
-image[mask, 2] = 0.0
+
+# Draw red circle object
+# image[mask, 0]: Channel 0 (Red) for pixels inside circle
+image[mask, 0] = 1.0  # Red object (full red)
+# image[mask, 1]: Channel 1 (Green) for pixels inside circle
+image[mask, 1] = 0.0  # No green
+# image[mask, 2]: Channel 2 (Blue) for pixels inside circle
+image[mask, 2] = 0.0  # No blue
+# Result: Red circle object
 
 # Create segmentation mask
 segmentation_mask = np.zeros((img_size, img_size))

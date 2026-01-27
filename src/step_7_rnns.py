@@ -46,15 +46,33 @@ print()
 # Create simple sequence data
 def create_sequence_data(seq_length=10, num_samples=100):
     """Create simple sequences: each number is previous + 1"""
-    X = []
-    y = []
+    # Lists to store input sequences and target values
+    X = []  # Input sequences
+    y = []  # Target values (next number in sequence)
     
+    # Generate num_samples different sequences
     for _ in range(num_samples):
+        # Random starting number (between 1 and 9)
+        # np.random.randint(1, 10) returns random integer in range [1, 10)
         start = np.random.randint(1, 10)
+        
+        # Create sequence: [start, start+1, start+2, ..., start+seq_length-1]
+        # List comprehension: [start + i for i in range(seq_length)]
+        # Example: start=3, seq_length=5 → [3, 4, 5, 6, 7]
         sequence = [start + i for i in range(seq_length)]
-        X.append(sequence[:-1])  # Input: all but last
-        y.append(sequence[-1])    # Target: last number
+        
+        # Input: all numbers except the last one
+        # sequence[:-1] gets all elements except last (slicing)
+        # Example: [3, 4, 5, 6, 7] → [3, 4, 5, 6]
+        X.append(sequence[:-1])
+        
+        # Target: the last number (what we want to predict)
+        # sequence[-1] gets last element
+        # Example: [3, 4, 5, 6, 7] → 7
+        y.append(sequence[-1])
     
+    # Convert to NumPy arrays
+    # dtype=np.float32: 32-bit float (PyTorch compatible)
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
 
 X, y = create_sequence_data(seq_length=5, num_samples=50)
@@ -70,7 +88,18 @@ print("Our data shape:", X.shape, "→ (samples, sequence_length)")
 print()
 
 # Convert to PyTorch tensors
+# torch.FloatTensor(X): Convert NumPy array to PyTorch tensor
+# .unsqueeze(-1): Add dimension at the end (for features)
+# X shape: (50, 4) → (50, 4, 1)
+# RNNs expect: (batch, sequence_length, features)
+# - batch: 50 samples
+# - sequence_length: 4 time steps
+# - features: 1 feature per time step (the number itself)
 X_tensor = torch.FloatTensor(X).unsqueeze(-1)  # Add feature dimension: (50, 4, 1)
+
+# y_tensor: Target values
+# y shape: (50,) → (50, 1) after unsqueeze
+# (batch, output_size)
 y_tensor = torch.FloatTensor(y).unsqueeze(-1)  # (50, 1)
 
 print("Tensor shapes:")
@@ -94,13 +123,23 @@ class SimpleRNN(nn.Module):
     
     def forward(self, x):
         # x shape: (batch, sequence_length, features)
-        # RNN returns: output, hidden
+        # Example: (50, 4, 1) = 50 samples, 4 time steps, 1 feature each
+        
+        # RNN processes sequence step by step
+        # self.rnn(x) returns two things:
+        # - rnn_out: Output at each time step, shape: (batch, sequence_length, hidden_size)
+        # - hidden: Final hidden state, shape: (num_layers, batch, hidden_size)
         rnn_out, hidden = self.rnn(x)
         
         # Use the last output from the sequence
+        # rnn_out[:, -1, :] gets last time step for each sample
+        # [:, -1, :] means: all batches, last time step, all hidden units
+        # Result shape: (batch, hidden_size)
         last_output = rnn_out[:, -1, :]  # (batch, hidden_size)
         
-        # Predict next value
+        # Predict next value using fully connected layer
+        # self.fc converts hidden state to prediction
+        # Input: (batch, hidden_size) → Output: (batch, output_size)
         prediction = self.fc(last_output)
         return prediction
 

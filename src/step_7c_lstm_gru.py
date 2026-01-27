@@ -62,30 +62,43 @@ print()
 print("=== 7c.4 Create Long Sequence Data ===")
 def create_long_sequence_data(seq_length=50, num_samples=100):
     """Create sequences with long dependencies"""
-    X = []
-    y = []
+    # Lists to store input sequences and target values
+    X = []  # Input sequences
+    y = []  # Target values (depends on first number, not last!)
     
     for _ in range(num_samples):
-        # Create pattern: first number determines last number
+        # Create pattern: first number determines target (long dependency!)
+        # This tests if model can remember information from far back
+        # np.random.randint(1, 5) returns random integer in [1, 5)
         start = np.random.randint(1, 5)
         sequence = []
         
         # Add random numbers in middle
+        # This makes it harder - lots of noise between first and last
         for i in range(seq_length - 1):
             if i == 0:
+                # First number: the important one we need to remember
                 sequence.append(start)
             else:
+                # Middle numbers: random noise (distraction)
+                # np.random.randint(1, 10) returns random integer in [1, 10)
                 sequence.append(np.random.randint(1, 10))
         
-        # Last number depends on first
+        # Last number (target) depends on FIRST number, not last!
+        # This is the challenge: model must remember first number across long sequence
+        # start % 2 == 0: Check if start is even
         if start % 2 == 0:
-            target = 0
+            target = 0  # Even first number → target is 0
         else:
-            target = 1
+            target = 1  # Odd first number → target is 1
         
+        # Store sequence and target
         X.append(sequence)
         y.append(target)
     
+    # Convert to NumPy arrays
+    # X: float32 for input features
+    # y: int64 for classification labels
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.int64)
 
 X, y = create_long_sequence_data(seq_length=30, num_samples=200)

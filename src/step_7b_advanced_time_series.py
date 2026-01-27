@@ -36,18 +36,36 @@ days = 365
 t = np.arange(days)
 
 # Trend component (upward)
+# Linear trend: starts at 100, increases by 0.1 per day
+# Formula: value = 100 + 0.1 * day_number
+# This represents long-term growth (e.g., increasing sales over time)
 trend = 100 + 0.1 * t
 
 # Seasonality (yearly pattern - 365 days)
+# Repeating pattern that cycles every 365 days (e.g., seasonal sales)
+# np.sin(2 * np.pi * t / 365): Sine wave with period 365 days
+# np.cos(2 * np.pi * t / 365): Cosine wave with period 365 days
+# Combining sin and cos creates more complex seasonal patterns
+# 10 * sin + 5 * cos: Different amplitudes for more realistic pattern
 seasonality = 10 * np.sin(2 * np.pi * t / 365) + 5 * np.cos(2 * np.pi * t / 365)
 
 # Cyclical (longer cycles)
+# Irregular cycles longer than seasonality (e.g., business cycles)
+# 2 * np.pi * t / 180: Period of 180 days (6 months)
+# 3 * sin: Amplitude of 3 (smaller than seasonality)
 cyclical = 3 * np.sin(2 * np.pi * t / 180)  # 6-month cycle
 
 # Noise
+# Random fluctuations (unpredictable variations)
+# np.random.normal(0, 2, days): Random values from normal distribution
+# mean=0: Centered around zero
+# std=2: Standard deviation of 2 (controls how much variation)
+# days: Number of values to generate
 noise = np.random.normal(0, 2, days)
 
 # Combined time series
+# Add all components together
+# Real time series = Trend + Seasonality + Cyclical + Noise
 time_series = trend + seasonality + cyclical + noise
 
 print(f"Generated {days} days of time series data")
@@ -87,8 +105,22 @@ axes[1, 1].set_ylabel('Value')
 axes[1, 1].grid(True, alpha=0.3)
 
 # Decomposition (simple moving average)
+# Extract trend using moving average
+# window: Number of days to average over (30-day window)
 window = 30
+
+# Moving average: Average of last 'window' days
+# np.ones(window): Array of ones [1, 1, 1, ..., 1] (window elements)
+# / window: Divide by window to get average
+# np.convolve(..., mode='same'): Convolve (sliding window average)
+#   - mode='same': Output has same length as input
+#   - Each point is average of surrounding window points
+# This smooths out short-term fluctuations to reveal trend
 ma_trend = np.convolve(time_series, np.ones(window)/window, mode='same')
+
+# Detrended: Remove trend to see seasonality and cycles
+# Subtract moving average trend from original series
+# Result shows seasonal and cyclical patterns more clearly
 detrended = time_series - ma_trend
 
 axes[1, 2].plot(t, time_series, linewidth=1, color='purple', alpha=0.5, label='Original')

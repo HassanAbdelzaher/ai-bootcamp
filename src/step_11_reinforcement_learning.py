@@ -73,27 +73,39 @@ class GridWorld:
     def step(self, action):
         """Take action and return (next_state, reward, done)"""
         # Actions: 0=up, 1=right, 2=down, 3=left
+        # Get current position
         row, col = self.state
         
+        # Update position based on action
+        # Ensure we don't go outside grid boundaries
         if action == 0:  # Up
+            # max(0, row - 1): Can't go above row 0 (top boundary)
             row = max(0, row - 1)
         elif action == 1:  # Right
+            # min(self.size - 1, col + 1): Can't go beyond right boundary
+            # self.size - 1 is the last column index (0-indexed)
             col = min(self.size - 1, col + 1)
         elif action == 2:  # Down
+            # min(self.size - 1, row + 1): Can't go below bottom boundary
             row = min(self.size - 1, row + 1)
         elif action == 3:  # Left
+            # max(0, col - 1): Can't go left of column 0 (left boundary)
             col = max(0, col - 1)
         
+        # Update current state to new position
         self.state = (row, col)
         
-        # Reward: -1 for each step, +10 for reaching goal
+        # Calculate reward and check if episode is done
+        # Reward: -1 for each step (encourages finding shortest path)
+        # +10 for reaching goal (large positive reward)
         if self.state == self.goal:
-            reward = 10
-            done = True
+            reward = 10   # Large positive reward for reaching goal
+            done = True    # Episode finished
         else:
-            reward = -1
-            done = False
+            reward = -1   # Small negative reward for each step (encourages efficiency)
+            done = False  # Episode continues
         
+        # Return: (new_state, reward, done_flag)
         return self.state, reward, done
     
     def visualize(self):
@@ -160,35 +172,61 @@ class QLearningAgent:
     
     def state_to_index(self, state):
         """Convert (row, col) to state index"""
+        # Extract row and column from state tuple
         row, col = state
+        # Convert 2D position to 1D index
+        # Formula: index = row * grid_width + col
+        # Example: (2, 3) in 4x4 grid → 2*4 + 3 = 11
         return row * 4 + col
     
     def choose_action(self, state, training=True):
         """Choose action using epsilon-greedy policy"""
+        # Convert state to index for Q-table lookup
         state_idx = self.state_to_index(state)
         
+        # Epsilon-greedy policy: balance exploration vs exploitation
+        # With probability epsilon: explore (try random action)
+        # With probability (1-epsilon): exploit (use best known action)
         if training and np.random.random() < self.epsilon:
             # Exploration: random action
+            # np.random.random() returns random float in [0, 1)
+            # If < epsilon, choose random action to explore
+            # np.random.randint(self.num_actions) returns random integer in [0, num_actions)
             return np.random.randint(self.num_actions)
         else:
-            # Exploitation: best action
+            # Exploitation: best action (highest Q-value)
+            # np.argmax() returns index of maximum value
+            # self.q_table[state_idx] gets Q-values for all actions in this state
+            # Returns action with highest Q-value
             return np.argmax(self.q_table[state_idx])
     
     def update(self, state, action, reward, next_state, done):
         """Update Q-value using Bellman equation"""
+        # Convert states to indices for Q-table access
         state_idx = self.state_to_index(state)
         next_state_idx = self.state_to_index(next_state)
         
-        # Current Q-value
+        # Current Q-value: Q(state, action)
+        # self.q_table[state_idx, action] gets Q-value for this state-action pair
         current_q = self.q_table[state_idx, action]
         
         # Maximum Q-value for next state
+        # If episode is done (reached goal), there's no next state
         if done:
-            next_max_q = 0
+            next_max_q = 0  # No future reward (episode ended)
         else:
+            # Get maximum Q-value over all possible actions in next state
+            # This represents best possible future reward from next state
+            # np.max() finds maximum value in array
             next_max_q = np.max(self.q_table[next_state_idx])
         
-        # Bellman equation: Q(s,a) = Q(s,a) + lr * [r + gamma * max(Q(s',a')) - Q(s,a)]
+        # Bellman equation: Q(s,a) = Q(s,a) + lr * [reward + gamma * max(Q(s',a')) - Q(s,a)]
+        # Target Q-value: reward + gamma * max(Q(next_state, all_actions))
+        # gamma (discount factor): How much we value future rewards (0.9 = 90%)
+        # Higher gamma = care more about long-term rewards
+        # Update Q-value: move current Q-value towards target
+        # Learning rate (lr) controls how much to update
+        # Higher lr = faster learning, but might overshoot
         new_q = current_q + self.lr * (reward + self.gamma * next_max_q - current_q)
         self.q_table[state_idx, action] = new_q
 

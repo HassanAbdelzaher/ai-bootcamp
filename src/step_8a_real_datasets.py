@@ -37,21 +37,33 @@ print()
 
 def create_cifar_like_data(num_samples=1000, img_size=32, num_classes=10):
     """Create synthetic CIFAR-like data"""
-    X = []
-    y = []
+    # Lists to store images and labels
+    X = []  # Images
+    y = []  # Class labels
     
     for i in range(num_samples):
-        # Create random color image (3 channels)
+        # Create random color image (3 channels: RGB)
+        # np.random.rand(3, img_size, img_size) creates random values in [0, 1)
+        # Shape: (3, 32, 32) = 3 channels, 32 height, 32 width
+        # .astype(np.float32) converts to 32-bit float (PyTorch compatible)
         img = np.random.rand(3, img_size, img_size).astype(np.float32)
         
-        # Add some structure based on class
+        # Add some structure based on class (makes classification possible)
+        # class_id: Assign class based on sample index (cycles through classes)
+        # i % num_classes: Remainder when dividing by num_classes (0-9)
         class_id = i % num_classes
-        # Add class-specific patterns (simplified)
-        img[class_id % 3, :, :] += 0.3  # Enhance one channel
         
+        # Add class-specific patterns (simplified)
+        # Enhance one channel based on class to create distinguishable patterns
+        # class_id % 3: Selects which channel (0, 1, or 2) to enhance
+        # += 0.3: Adds 0.3 to all pixels in that channel (makes it brighter)
+        img[class_id % 3, :, :] += 0.3
+        
+        # Store image and label
         X.append(img)
         y.append(class_id)
     
+    # Convert lists to NumPy arrays
     return np.array(X), np.array(y)
 
 # Create smaller dataset for faster training
@@ -67,17 +79,30 @@ print()
 # 8a.3 Prepare Data Loaders
 print("=== 8a.3 Prepare Data Loaders ===")
 # Convert to tensors
+# torch.FloatTensor(): Convert NumPy array to PyTorch float tensor
+# X_train shape: (500, 3, 32, 32) - 500 images, 3 channels, 32x32 pixels
 X_train_tensor = torch.FloatTensor(X_train)
+# torch.LongTensor(): Convert NumPy array to PyTorch long (integer) tensor
+# y_train shape: (500,) - 500 class labels
 y_train_tensor = torch.LongTensor(y_train)
+
+# Test tensors (same process)
 X_test_tensor = torch.FloatTensor(X_test)
 y_test_tensor = torch.LongTensor(y_test)
 
 # Create datasets
+# TensorDataset: PyTorch dataset that pairs inputs and labels
+# train_dataset: Pairs X_train_tensor with y_train_tensor
 train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
+# test_dataset: Pairs X_test_tensor with y_test_tensor
 test_dataset = TensorDataset(X_test_tensor, y_test_tensor)
 
 # Create data loaders
+# DataLoader: Provides batches of data for training
+# batch_size=32: Process 32 images at a time (faster than one-by-one)
+# shuffle=True: Randomize order for training (helps learning)
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+# shuffle=False: Keep test data in order (for consistent evaluation)
 test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
 print("Data loaders created")
