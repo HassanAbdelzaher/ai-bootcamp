@@ -12,7 +12,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from plotting import plot_learning_curve
+from plotting import plot_learning_curve, plot_word_embeddings
 
 print("=== Step 7a: Text Generator ===")
 print("Building a character-level RNN to generate text")
@@ -149,7 +149,39 @@ print()
 print("=== 7a.5 Learning Curve ===")
 plot_learning_curve(losses, title="Text Generator Training Loss", ylabel="Loss (Cross-Entropy)")
 
-# 7a.6 Generate Text
+# 7a.6 Visualize Word Embeddings
+print("=== 7a.6 Visualize Character Embeddings ===")
+print("Embeddings convert characters into dense vectors")
+print("  - Similar characters have similar embeddings")
+print("  - Learned during training")
+print("  - Useful for understanding what the model learned")
+print()
+
+# Extract embeddings from the trained model
+model.eval()
+embedding_weights = model.embedding.weight.data.cpu().numpy()
+
+# Select a subset of characters to visualize
+sample_chars = ['a', 'e', 'i', 'o', 'u', 't', 'n', 's', 'r', 'h', 'd', 'l', 'c', 'm', 'f', 'p']
+sample_indices = [char_to_idx[char] for char in sample_chars if char in char_to_idx]
+sample_embeddings = embedding_weights[sample_indices]
+sample_words = [char for char in sample_chars if char in char_to_idx]
+
+print(f"Visualizing embeddings for {len(sample_words)} characters")
+print(f"Characters: {', '.join(sample_words)}")
+print()
+
+# Visualize embeddings
+plot_word_embeddings(sample_embeddings, words=sample_words, 
+                    title="Character Embeddings Visualization (2D Projection)")
+
+print("Observations:")
+print("  - Vowels (a, e, i, o, u) might cluster together")
+print("  - Common consonants (t, n, s) might be close")
+print("  - Model learns relationships between characters")
+print()
+
+# 7a.7 Generate Text
 print("=== 7a.6 Generate Text ===")
 def generate_text(model, start_text, length=100, temperature=0.8):
     """Generate text given a starting sequence"""
@@ -188,7 +220,7 @@ print(f"\nGenerated text:")
 print(generated)
 print()
 
-# 7a.7 Tips for Better Text Generation
+# 7a.8 Tips for Better Text Generation
 print("=== 7a.7 Tips for Better Text Generation ===")
 print("✅ Use more training data (books, articles)")
 print("✅ Train for more epochs")

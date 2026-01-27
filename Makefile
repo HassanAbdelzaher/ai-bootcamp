@@ -7,7 +7,7 @@ PYTHON = $(VENV)/bin/python
 PIP = $(VENV)/bin/pip
 SHELL = /bin/bash
 
-.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-4 run-step-5 run-step-5b run-step-6 run-step-6b run-step-7 run-step-7a run-step-7b run-step-7c run-step-7d run-step-8 run-step-8a run-step-8b run-step-8c run-step-8d run-step-8e example-vg project-1 project-2 test check
+.PHONY: help venv install install-dev clean run-all run-step-0 run-step-1 run-step-2 run-step-3 run-step-3c run-step-4 run-step-5 run-step-5b run-step-6 run-step-6b run-step-6c run-step-7 run-step-7a run-step-7b run-step-7b-adv run-step-7c run-step-7d run-step-7e run-step-8 run-step-8a run-step-8b run-step-8c run-step-8d run-step-8e run-step-8f run-step-11 example-vg project-1 project-2 test check
 
 # Default target
 help:
@@ -22,22 +22,28 @@ help:
 	@echo "  make run-step-1       - Run Step 1: Linear Regression"
 	@echo "  make run-step-2       - Run Step 2: Perceptron"
 	@echo "  make run-step-3       - Run Step 3: Logistic Regression"
+	@echo "  make run-step-3c      - Run Step 3c: Advanced Evaluation Metrics"
 	@echo "  make run-step-4       - Run Step 4: Multiple Neurons"
 	@echo "  make run-step-5       - Run Step 5: XOR and Hidden Layers"
 	@echo "  make run-step-5b      - Run Step 5b: Regularization and Overfitting"
 	@echo "  make run-step-6       - Run Step 6: PyTorch"
 	@echo "  make run-step-6b      - Run Step 6b: Optimization Techniques"
+	@echo "  make run-step-6c      - Run Step 6c: Hyperparameter Tuning"
 	@echo "  make run-step-7       - Run Step 7: RNNs (Sequences)"
 	@echo "  make run-step-7a      - Run Step 7a: Text Generator"
 	@echo "  make run-step-7b      - Run Step 7b: Stock Price Prediction"
+	@echo "  make run-step-7b-adv  - Run Step 7b Advanced: Advanced Time Series"
 	@echo "  make run-step-7c      - Run Step 7c: LSTM and GRU"
 	@echo "  make run-step-7d      - Run Step 7d: Transformers (BERT, GPT)"
+	@echo "  make run-step-7e      - Run Step 7e: NLP Applications"
 	@echo "  make run-step-8       - Run Step 8: CNNs (Images)"
 	@echo "  make run-step-8a      - Run Step 8a: Real Datasets (CIFAR-10)"
 	@echo "  make run-step-8b      - Run Step 8b: Image Classifiers"
 	@echo "  make run-step-8c      - Run Step 8c: Transfer Learning"
 	@echo "  make run-step-8d      - Run Step 8d: Object Detection (YOLO, R-CNN)"
 	@echo "  make run-step-8e      - Run Step 8e: Image Generation (GANs, VAEs)"
+	@echo "  make run-step-8f      - Run Step 8f: Advanced Vision Tasks"
+	@echo "  make run-step-11      - Run Step 11: Reinforcement Learning Basics"
 	@echo ""
 	@echo "Examples (practical neuron usage):"
 	@echo "  make example-0        - Example: Simple neuron (Step 0)"
@@ -111,6 +117,10 @@ run-step-3: venv
 	@echo "Running Step 3: Logistic Regression..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python step_3_logistic_regression.py"
 
+run-step-3c: venv
+	@echo "Running Step 3c: Advanced Evaluation Metrics..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_3c_evaluation_metrics.py"
+
 run-step-4: venv
 	@echo "Running Step 4: Multiple Neurons..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python step_4_multiple_neurons.py"
@@ -131,6 +141,10 @@ run-step-6b: venv
 	@echo "Running Step 6b: Optimization Techniques..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python step_6b_optimization_techniques.py"
 
+run-step-6c: venv
+	@echo "Running Step 6c: Hyperparameter Tuning..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_6c_hyperparameter_tuning.py"
+
 run-step-7: venv
 	@echo "Running Step 7: RNNs (Sequences)..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python step_7_rnns.py"
@@ -143,6 +157,10 @@ run-step-7b: venv
 	@echo "Running Step 7b: Stock Price Prediction..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python step_7b_stock_prices.py"
 
+run-step-7b-adv: venv
+	@echo "Running Step 7b Advanced: Advanced Time Series..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_7b_advanced_time_series.py"
+
 run-step-7c: venv
 	@echo "Running Step 7c: LSTM and GRU..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python step_7c_lstm_gru.py"
@@ -150,6 +168,10 @@ run-step-7c: venv
 run-step-7d: venv
 	@echo "Running Step 7d: Transformers (BERT, GPT)..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python step_7d_transformers.py"
+
+run-step-7e: venv
+	@echo "Running Step 7e: NLP Applications..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_7e_nlp_applications.py"
 
 run-step-8: venv
 	@echo "Running Step 8: CNNs (Images)..."
@@ -174,6 +196,14 @@ run-step-8d: venv
 run-step-8e: venv
 	@echo "Running Step 8e: Image Generation (GANs, VAEs)..."
 	@bash -c "source $(VENV)/bin/activate && cd src && python step_8e_image_generation.py"
+
+run-step-8f: venv
+	@echo "Running Step 8f: Advanced Vision Tasks..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_8f_advanced_vision.py"
+
+run-step-11: venv
+	@echo "Running Step 11: Reinforcement Learning Basics..."
+	@bash -c "source $(VENV)/bin/activate && cd src && python step_11_reinforcement_learning.py"
 
 # Example files (practical neuron usage)
 example-0: venv

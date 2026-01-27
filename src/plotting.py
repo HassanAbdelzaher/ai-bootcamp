@@ -726,3 +726,210 @@ def plot_gradient_flow(gradients_history, layer_idx=0, title="Gradient Flow Over
     
     plt.tight_layout()
     plt.show()
+
+
+def plot_roc_curve(fpr, tpr, auc_score=None, title="ROC Curve"):
+    """Plot ROC curve with AUC"""
+    fig, ax = plt.subplots(figsize=(9, 7))
+    ax.plot(fpr, tpr, linewidth=3, color='steelblue', 
+           label=f'ROC Curve' + (f' (AUC = {auc_score:.3f})' if auc_score else ''))
+    ax.plot([0, 1], [0, 1], 'k--', linewidth=2, label='Random Classifier (AUC = 0.5)', alpha=0.5)
+    if auc_score:
+        ax.fill_between(fpr, 0, tpr, alpha=0.3, color='steelblue', label='AUC Area')
+    ax.set_xlabel('False Positive Rate (1 - Specificity)', fontsize=12, fontweight='bold')
+    ax.set_ylabel('True Positive Rate (Recall)', fontsize=12, fontweight='bold')
+    ax.set_title(title, fontsize=14, fontweight='bold', pad=15)
+    ax.legend(fontsize=11, loc='lower right')
+    ax.grid(True, alpha=0.3)
+    ax.set_xlim([0, 1])
+    ax.set_ylim([0, 1])
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_pr_curve(recalls, precisions, pr_auc=None, title="Precision-Recall Curve"):
+    """Plot Precision-Recall curve"""
+    fig, ax = plt.subplots(figsize=(9, 7))
+    ax.plot(recalls, precisions, linewidth=3, color='coral',
+           label=f'PR Curve' + (f' (AUC = {pr_auc:.3f})' if pr_auc else ''))
+    if pr_auc:
+        ax.fill_between(recalls, 0, precisions, alpha=0.3, color='coral', label='PR-AUC Area')
+    ax.set_xlabel('Recall', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Precision', fontsize=12, fontweight='bold')
+    ax.set_title(title, fontsize=14, fontweight='bold', pad=15)
+    ax.legend(fontsize=11, loc='lower left')
+    ax.grid(True, alpha=0.3)
+    ax.set_xlim([0, 1])
+    ax.set_ylim([0, 1])
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_train_test_split(X_train, y_train, X_test, y_test, y_pred_train=None, y_pred_test=None,
+                          xlabel="X", ylabel="Y", title="Train/Test Split Visualization"):
+    """Visualize train/test split with optional predictions"""
+    fig, ax = plt.subplots(figsize=(10, 7))
+    
+    # Plot training data
+    ax.scatter(X_train, y_train, c='blue', marker='o', s=100, alpha=0.6, 
+              edgecolors='darkblue', linewidths=1.5, label='Training Data', zorder=3)
+    
+    # Plot test data
+    ax.scatter(X_test, y_test, c='red', marker='s', s=100, alpha=0.6, 
+              edgecolors='darkred', linewidths=1.5, label='Test Data', zorder=3)
+    
+    # Plot predictions if provided
+    if y_pred_train is not None:
+        ax.plot(X_train, y_pred_train, 'b--', linewidth=2, alpha=0.7, label='Train Predictions')
+    if y_pred_test is not None:
+        ax.plot(X_test, y_pred_test, 'r--', linewidth=2, alpha=0.7, label='Test Predictions')
+    
+    ax.set_xlabel(xlabel, fontsize=12, fontweight='bold')
+    ax.set_ylabel(ylabel, fontsize=12, fontweight='bold')
+    ax.set_title(title, fontsize=14, fontweight='bold', pad=15)
+    ax.legend(fontsize=11, loc='best')
+    ax.grid(True, alpha=0.3, linestyle='--')
+    
+    # Add text annotation
+    train_ratio = len(X_train) / (len(X_train) + len(X_test)) * 100
+    test_ratio = len(X_test) / (len(X_train) + len(X_test)) * 100
+    info_text = f'Train: {len(X_train)} ({train_ratio:.1f}%)\nTest: {len(X_test)} ({test_ratio:.1f}%)'
+    ax.text(0.02, 0.98, info_text, transform=ax.transAxes, fontsize=10,
+            verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+    
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_overfitting(train_losses, val_losses, title="Training vs Validation Loss (Overfitting Detection)"):
+    """Visualize overfitting by comparing training and validation losses"""
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    epochs = range(1, len(train_losses) + 1)
+    
+    ax.plot(epochs, train_losses, 'b-', linewidth=2.5, label='Training Loss', alpha=0.8)
+    ax.plot(epochs, val_losses, 'r-', linewidth=2.5, label='Validation Loss', alpha=0.8)
+    
+    # Highlight overfitting region (where val loss starts increasing)
+    if len(val_losses) > 10:
+        min_val_idx = np.argmin(val_losses)
+        if min_val_idx < len(val_losses) - 5:
+            ax.axvspan(min_val_idx + 1, len(val_losses), alpha=0.2, color='red', 
+                      label='Overfitting Region')
+    
+    ax.set_xlabel("Epoch", fontsize=12, fontweight='bold')
+    ax.set_ylabel("Loss", fontsize=12, fontweight='bold')
+    ax.set_title(title, fontsize=14, fontweight='bold', pad=15)
+    ax.legend(fontsize=11, loc='best')
+    ax.grid(True, alpha=0.3, linestyle='--')
+    
+    # Add annotation
+    if len(val_losses) > 0:
+        min_val_loss = min(val_losses)
+        min_val_epoch = val_losses.index(min_val_loss) + 1
+        ax.annotate(f'Best Val Loss: {min_val_loss:.4f}\n(at epoch {min_val_epoch})',
+                   xy=(min_val_epoch, min_val_loss), xytext=(min_val_epoch + len(epochs)*0.2, min_val_loss + max(val_losses)*0.1),
+                   arrowprops=dict(arrowstyle='->', color='red', lw=2),
+                   fontsize=10, bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.7))
+    
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_word_embeddings(embeddings, words=None, title="Word Embeddings Visualization (2D Projection)"):
+    """Visualize word embeddings in 2D using PCA or t-SNE"""
+    from sklearn.decomposition import PCA
+    
+    # Use PCA to reduce to 2D for visualization
+    if embeddings.shape[1] > 2:
+        pca = PCA(n_components=2)
+        embeddings_2d = pca.fit_transform(embeddings)
+        explained_var = sum(pca.explained_variance_ratio_)
+    else:
+        embeddings_2d = embeddings
+        explained_var = 1.0
+    
+    fig, ax = plt.subplots(figsize=(12, 8))
+    
+    # Plot embeddings
+    scatter = ax.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], 
+                        s=150, alpha=0.6, c=range(len(embeddings_2d)), 
+                        cmap='viridis', edgecolors='black', linewidths=1)
+    
+    # Add word labels if provided
+    if words is not None:
+        for i, word in enumerate(words):
+            ax.annotate(word, (embeddings_2d[i, 0], embeddings_2d[i, 1]), 
+                       fontsize=9, ha='center', va='bottom',
+                       bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.7))
+    
+    ax.set_xlabel(f'First Principal Component', fontsize=12, fontweight='bold')
+    ax.set_ylabel(f'Second Principal Component', fontsize=12, fontweight='bold')
+    ax.set_title(f'{title}\n(Explained Variance: {explained_var:.1%})', 
+                fontsize=14, fontweight='bold', pad=15)
+    ax.grid(True, alpha=0.3, linestyle='--')
+    
+    plt.colorbar(scatter, ax=ax, label='Word Index')
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_model_architecture(model, input_shape=None, title="Model Architecture"):
+    """Create a simple text-based model architecture diagram"""
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.axis('off')
+    
+    # Get model structure
+    layers = []
+    if hasattr(model, 'named_children'):
+        for name, module in model.named_children():
+            layers.append((name, str(type(module).__name__), 
+                          sum(p.numel() for p in module.parameters())))
+    else:
+        layers = [("Model", str(type(model).__name__), 
+                  sum(p.numel() for p in model.parameters()))]
+    
+    # Create visualization
+    y_positions = np.linspace(0.9, 0.1, len(layers))
+    box_height = 0.08
+    box_width = 0.4
+    
+    for i, (name, layer_type, num_params) in enumerate(layers):
+        y_pos = y_positions[i]
+        
+        # Draw box
+        rect = mpatches.Rectangle((0.3, y_pos - box_height/2), box_width, box_height,
+                                 linewidth=2, edgecolor='steelblue', facecolor='lightblue',
+                                 alpha=0.7)
+        ax.add_patch(rect)
+        
+        # Add text
+        ax.text(0.5, y_pos, f'{name}\n{layer_type}', 
+               ha='center', va='center', fontsize=10, fontweight='bold')
+        
+        # Add parameter count
+        if num_params > 0:
+            ax.text(0.75, y_pos, f'{num_params:,} params', 
+                   ha='left', va='center', fontsize=9, style='italic')
+        
+        # Draw arrow
+        if i < len(layers) - 1:
+            ax.arrow(0.5, y_pos - box_height/2 - 0.02, 0, -0.05,
+                    head_width=0.02, head_length=0.01, fc='black', ec='black')
+    
+    # Add title and info
+    ax.text(0.5, 0.95, title, ha='center', va='top', 
+           fontsize=16, fontweight='bold', transform=ax.transAxes)
+    
+    total_params = sum(p.numel() for p in model.parameters())
+    if input_shape:
+        info_text = f'Input Shape: {input_shape}\nTotal Parameters: {total_params:,}'
+    else:
+        info_text = f'Total Parameters: {total_params:,}'
+    
+    ax.text(0.5, 0.05, info_text, ha='center', va='bottom', 
+           fontsize=11, transform=ax.transAxes,
+           bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.7))
+    
+    plt.tight_layout()
+    plt.show()

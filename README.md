@@ -78,6 +78,12 @@ By the end of this bootcamp, you'll be able to:
 - **Skills**: Probabilistic predictions, smooth learning
 - **Outcome**: AI that expresses confidence, not just decisions
 
+##### Step 3c: Advanced Evaluation Metrics
+- ROC curves, AUC, Precision-Recall curves
+- F1-score, confusion matrix deep dive
+- Regression metrics (R², MAE, MAPE)
+- Model comparison techniques
+
 #### Step 4: Multiple Neurons
 - **Time**: ~75 minutes
 - **Topics**: Neural network layers, matrix operations, multiple neurons
@@ -114,6 +120,13 @@ By the end of this bootcamp, you'll be able to:
 - Momentum and adaptive methods
 - When to use each optimizer
 
+##### Step 6c: Hyperparameter Tuning
+- Grid search and random search
+- Learning rate tuning
+- Hyperparameter importance analysis
+- Bayesian optimization (conceptual)
+- Best practices for systematic tuning
+
 **Milestone 3**: You're using industry-standard tools!
 
 ---
@@ -137,6 +150,13 @@ By the end of this bootcamp, you'll be able to:
 - Handle sequential patterns
 - Understand forecasting
 
+##### Step 7b Advanced: Advanced Time Series
+- ARIMA models (traditional approach)
+- Seasonality detection and handling
+- Multiple time series analysis
+- Forecast evaluation metrics
+- Anomaly detection in time series
+
 ##### Step 7c: LSTM and GRU
 - Advanced RNN architectures
 - Long-term memory
@@ -146,6 +166,14 @@ By the end of this bootcamp, you'll be able to:
 - Attention mechanism
 - BERT and GPT architectures
 - Modern NLP foundations
+
+##### Step 7e: NLP Applications
+- Tokenization (word-level, subword)
+- Word embeddings (Word2Vec, GloVe)
+- Named Entity Recognition (NER)
+- Sentiment analysis
+- Text classification pipelines
+- Sequence-to-sequence models
 
 #### Step 8: Convolutional Neural Networks (CNNs)
 - **Time**: ~90 minutes
@@ -178,7 +206,27 @@ By the end of this bootcamp, you'll be able to:
 - VAEs (Variational Autoencoders)
 - Create new images
 
+##### Step 8f: Advanced Vision Tasks
+- Image segmentation (semantic, instance)
+- Style transfer
+- Image super-resolution
+- Depth estimation
+- Video processing basics
+
 **Milestone 4**: You can build real-world AI applications!
+
+---
+
+### **Phase 5: Advanced Topics (Step 11)**
+*Explore cutting-edge AI techniques*
+
+#### Step 11: Reinforcement Learning Basics
+- **Time**: ~90 minutes
+- **Topics**: RL fundamentals, Q-learning, policy gradients, DQN
+- **Skills**: Learning through interaction, reward maximization
+- **Outcome**: Understand how AI learns from experience
+
+**Milestone 5**: You understand all major branches of AI!
 
 ---
 
@@ -257,6 +305,7 @@ That's it! You're ready to learn AI! 🎉
 - ✅ **Learning Algorithms**: Gradient descent, backpropagation, optimization
 - ✅ **Loss Functions**: MSE, cross-entropy, when to use each
 - ✅ **Training Process**: Epochs, batches, learning rates, convergence
+- ✅ **Evaluation Metrics**: ROC, AUC, Precision-Recall, F1-score, confusion matrix
 - ✅ **Regularization**: L2, dropout, early stopping, preventing overfitting
 
 ### Neural Network Types
@@ -266,11 +315,14 @@ That's it! You're ready to learn AI! 🎉
 - ✅ **LSTM & GRU**: Advanced RNNs with memory
 - ✅ **Convolutional Networks (CNNs)**: Process images
 - ✅ **Transformers**: Modern attention-based architectures
+- ✅ **Reinforcement Learning**: Learning through interaction and rewards
 
 ### Practical Skills
 
 - ✅ **PyTorch**: Industry-standard deep learning framework
 - ✅ **Optimization**: SGD, Adam, RMSprop, learning rate scheduling
+- ✅ **Hyperparameter Tuning**: Grid search, random search, Bayesian optimization
+- ✅ **NLP**: Tokenization, embeddings, NER, sentiment analysis, seq2seq
 - ✅ **Data Preprocessing**: Normalization, augmentation
 - ✅ **Model Evaluation**: Accuracy, loss curves, metrics
 - ✅ **Transfer Learning**: Using pre-trained models
@@ -298,11 +350,13 @@ make run-step-0    # Run Step 0: Math Foundations
 make run-step-1    # Run Step 1: Linear Regression
 make run-step-2    # Run Step 2: Perceptron
 make run-step-3    # Run Step 3: Logistic Regression
+make run-step-3c   # Run Step 3c: Advanced Evaluation Metrics
 make run-step-4    # Run Step 4: Multiple Neurons
 make run-step-5    # Run Step 5: XOR and Hidden Layers
 make run-step-5b   # Run Step 5b: Regularization and Overfitting
 make run-step-6    # Run Step 6: PyTorch
 make run-step-6b   # Run Step 6b: Optimization Techniques
+make run-step-6c   # Run Step 6c: Hyperparameter Tuning
 make run-step-7    # Run Step 7: RNNs (Sequences)
 make run-step-8    # Run Step 8: CNNs (Images)
 ```
@@ -312,9 +366,11 @@ make run-step-8    # Run Step 8: CNNs (Images)
 ```bash
 # RNN Extensions
 make run-step-7a   # Text Generator
-make run-step-7b   # Stock Price Prediction
-make run-step-7c   # LSTM and GRU
+make run-step-7b      # Stock Price Prediction
+make run-step-7b-adv  # Advanced Time Series
+make run-step-7c      # LSTM and GRU
 make run-step-7d   # Transformers (BERT, GPT)
+make run-step-7e   # NLP Applications
 
 # CNN Extensions
 make run-step-8a   # Real Datasets (CIFAR-10)
@@ -322,6 +378,9 @@ make run-step-8b   # Image Classifiers
 make run-step-8c   # Transfer Learning
 make run-step-8d   # Object Detection (YOLO, R-CNN)
 make run-step-8e   # Image Generation (GANs, VAEs)
+make run-step-8f   # Advanced Vision Tasks
+make run-step-8f   # Advanced Vision Tasks
+make run-step-11   # Reinforcement Learning Basics
 ```
 
 ### Projects (Practical Applications)
@@ -415,6 +474,8 @@ Each step has comprehensive documentation in the `docs/` folder:
 
 - **Step_X_*.md**: Detailed explanations with code breakdowns
 - **CODE_EXPLANATIONS_GUIDE.md**: How to read code explanations
+- **FRAMEWORK_COMPARISON.md**: PyTorch vs TensorFlow vs JAX comparison
+- **COURSE_GAPS_ANALYSIS.md**: Analysis of course coverage and gaps
 - All code blocks include line-by-line explanations
 - Visual descriptions of graphs and plots
 - Mathematical foundations explained
@@ -517,6 +578,9 @@ If `make` commands fail:
 ---
 
 ## 📚 Additional Resources
+
+### Framework Comparison
+- **Framework Comparison Guide**: See `docs/FRAMEWORK_COMPARISON.md` for PyTorch vs TensorFlow vs JAX
 
 ### Official Documentation
 - [NumPy Documentation](https://numpy.org/doc/)

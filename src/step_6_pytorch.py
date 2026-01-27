@@ -135,8 +135,70 @@ print("\nAccuracy:", (preds == y.int()).float().mean().item())
 print("✅ PyTorch solved XOR successfully!")
 print()
 
-# 6.11 Comparing Scratch vs PyTorch
-print("=== 6.11 Comparing Scratch vs PyTorch ===")
+# 6.11 Model Saving and Loading
+print("=== 6.11 Model Saving and Loading ===")
+print("Saving models allows you to:")
+print("  - Reuse trained models without retraining")
+print("  - Share models with others")
+print("  - Deploy models to production")
+print("  - Resume training from checkpoints")
+print()
+
+# Save the model
+model_path = "xor_model.pth"
+torch.save({
+    'model_state_dict': model.state_dict(),
+    'optimizer_state_dict': optimizer.state_dict(),
+    'loss': losses[-1],
+}, model_path)
+print(f"✅ Model saved to {model_path}")
+print(f"   - Model weights: {model_path}")
+print(f"   - File size: ~{sum(p.numel() * 4 for p in model.parameters()) / 1024:.1f} KB")
+print()
+
+# Create a new model instance
+print("Creating a new model instance (untrained)...")
+new_model = nn.Sequential(
+    nn.Linear(2, 4),
+    nn.ReLU(),
+    nn.Linear(4, 1),
+    nn.Sigmoid()
+)
+
+# Test new model (should be random)
+with torch.no_grad():
+    new_probs = new_model(X)
+    new_preds = (new_probs >= 0.5).int()
+    new_accuracy = (new_preds == y.int()).float().mean().item()
+print(f"New model accuracy (before loading): {new_accuracy:.2%}")
+print("  This is random because the model hasn't been trained yet")
+print()
+
+# Load the saved model
+print(f"Loading model from {model_path}...")
+checkpoint = torch.load(model_path)
+new_model.load_state_dict(checkpoint['model_state_dict'])
+print("✅ Model loaded successfully!")
+print()
+
+# Test loaded model (should match original)
+with torch.no_grad():
+    loaded_probs = new_model(X)
+    loaded_preds = (loaded_probs >= 0.5).int()
+    loaded_accuracy = (loaded_preds == y.int()).float().mean().item()
+print(f"Loaded model accuracy: {loaded_accuracy:.2%}")
+print("  This matches the original trained model!")
+print()
+
+# Clean up
+import os
+if os.path.exists(model_path):
+    os.remove(model_path)
+    print(f"Cleaned up: Removed {model_path}")
+print()
+
+# 6.12 Comparing Scratch vs PyTorch
+print("=== 6.12 Comparing Scratch vs PyTorch ===")
 print("| From Scratch          | PyTorch              |")
 print("|----------------------|----------------------|")
 print("| Manual gradients     | Automatic            |")
@@ -148,14 +210,14 @@ print("🧠 Rule: Learn from scratch → build with PyTorch")
 print()
 
 # Mini Projects Ideas
-print("=== 6.12 Mini Projects Ideas ===")
+print("=== 6.13 Mini Projects Ideas ===")
 print("Project 1: Pass / Fail predictor (study hours)")
 print("Project 2: Grade classifier (A/B/C)")
 print("Project 3: Student performance predictor (multi-feature)")
 print()
 
 # Common Beginner Mistakes
-print("=== 6.13 Common Beginner Mistakes ===")
+print("=== 6.14 Common Beginner Mistakes ===")
 print("❌ Using PyTorch without understanding math")
 print("❌ Forgetting optimizer.zero_grad()")
 print("❌ Mixing NumPy and Torch tensors")
@@ -163,7 +225,7 @@ print("❌ Ignoring loss curves")
 print()
 
 # Final Checklist
-print("=== 6.14 Final Checklist (Bootcamp Complete 🎓) ===")
+print("=== 6.15 Final Checklist (Bootcamp Complete 🎓) ===")
 print("Students can:")
 print("✅ Explain neurons mathematically")
 print("✅ Train models from scratch")

@@ -5,7 +5,7 @@ Tools: Python + NumPy + Matplotlib
 """
 
 import numpy as np
-from plotting import plot_xor_data, plot_learning_curves_comparison, plot_decision_regions
+from plotting import plot_xor_data, plot_learning_curves_comparison, plot_decision_regions, plot_overfitting
 
 # 5.2 The XOR Problem
 print("=== 5.2 The XOR Problem ===")
@@ -152,8 +152,78 @@ _, probs = forward(grid)
 Z = probs.reshape(xx.shape)
 plot_decision_regions(xx, yy, Z, X, y)
 
+# 5.13 Understanding Overfitting
+print("=== 5.13 Understanding Overfitting ===")
+print("Overfitting: Model learns training data too well, fails on new data")
+print("  - Training loss decreases")
+print("  - Validation loss increases (after a point)")
+print("  - Model memorizes instead of generalizing")
+print()
+
+# Create a scenario to demonstrate overfitting
+# Use a larger network and train for many epochs
+np.random.seed(42)
+W1_overfit = np.random.randn(2, 8) * 0.1  # Larger hidden layer
+b1_overfit = np.zeros((1, 8))
+W2_overfit = np.random.randn(8, 1) * 0.1
+b2_overfit = np.zeros((1, 1))
+
+def forward_overfit(X):
+    """Forward pass for overfitting demo"""
+    Z1 = X @ W1_overfit + b1_overfit
+    A1 = sigmoid(Z1)
+    Z2 = A1 @ W2_overfit + b2_overfit
+    A2 = sigmoid(Z2)
+    return A1, A2
+
+# Create validation set (slightly different data)
+X_val = X + np.random.randn(*X.shape) * 0.05  # Add small noise
+y_val = y.copy()
+
+train_losses = []
+val_losses = []
+lr_overfit = 0.1
+
+print("Training with larger network (demonstrating overfitting)...")
+for epoch in range(10000):
+    # Training
+    _, y_pred_train = forward_overfit(X)
+    train_loss = -np.mean(y * np.log(y_pred_train + 1e-9) + (1 - y) * np.log(1 - y_pred_train + 1e-9))
+    train_losses.append(train_loss)
+    
+    # Validation
+    _, y_pred_val = forward_overfit(X_val)
+    val_loss = -np.mean(y_val * np.log(y_pred_val + 1e-9) + (1 - y_val) * np.log(1 - y_pred_val + 1e-9))
+    val_losses.append(val_loss)
+    
+    # Backpropagation (simplified)
+    if epoch < 5000:  # Only train for first half
+        dZ2 = y_pred_train - y
+        dW2 = forward_overfit(X)[0].T @ dZ2
+        db2 = np.mean(dZ2, axis=0, keepdims=True)
+        dA1 = dZ2 @ W2_overfit.T
+        dZ1 = dA1 * forward_overfit(X)[0] * (1 - forward_overfit(X)[0])
+        dW1 = X.T @ dZ1
+        db1 = np.mean(dZ1, axis=0, keepdims=True)
+        
+        W2_overfit -= lr_overfit * dW2
+        b2_overfit -= lr_overfit * db2
+        W1_overfit -= lr_overfit * dW1
+        b1_overfit -= lr_overfit * db1
+
+# Visualize overfitting
+plot_overfitting(train_losses, val_losses, 
+                title="Overfitting Detection: Training vs Validation Loss")
+
+print("Key observations:")
+print("  - Training loss continues decreasing")
+print("  - Validation loss decreases then increases (overfitting starts)")
+print("  - Best model is at minimum validation loss")
+print("  - Solution: Early stopping, regularization, more data")
+print()
+
 # Why Step 5 Is Critical
-print("=== 5.13 Why Step 5 Is Critical ===")
+print("=== 5.14 Why Step 5 Is Critical ===")
 print("✅ Explains why deep learning exists")
 print("✅ Shows limits of shallow models")
 print("✅ Makes hidden layers intuitive")
@@ -165,3 +235,4 @@ print("=== Exercises ===")
 print("Exercise 1: Try different numbers of hidden neurons (2, 8)")
 print("Exercise 2: Replace sigmoid with ReLU in hidden layer")
 print("Exercise 3: Why does adding depth help but adding width sometimes doesn't?")
+print("Exercise 4: Experiment with early stopping to prevent overfitting")

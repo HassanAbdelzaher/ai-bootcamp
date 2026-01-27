@@ -5,7 +5,7 @@ Tools: Python + NumPy + Matplotlib
 """
 
 import numpy as np
-from plotting import plot_sigmoid_function, plot_learning_curve, plot_probability_curve
+from plotting import plot_sigmoid_function, plot_learning_curve, plot_probability_curve, plot_roc_curve
 
 # 3.3 Sigmoid Function (Probability Maker)
 print("=== 3.3 Sigmoid Function ===")
@@ -107,8 +107,64 @@ x_vals = np.linspace(0, 5, 200)
 probs = sigmoid(w * x_vals + b)
 plot_probability_curve(x_vals, probs, X, y, threshold=0.5)
 
+# 3.12 ROC Curve (Receiver Operating Characteristic)
+print("=== 3.12 ROC Curve Analysis ===")
+print("ROC curve shows model performance across different thresholds")
+print("  - X-axis: False Positive Rate (1 - Specificity)")
+print("  - Y-axis: True Positive Rate (Recall/Sensitivity)")
+print("  - AUC (Area Under Curve): Higher is better (max = 1.0)")
+print()
+
+# Calculate ROC curve
+def calculate_roc_curve(y_true, y_scores):
+    """Calculate ROC curve points"""
+    # Sort by scores (descending)
+    sorted_indices = np.argsort(y_scores)[::-1]
+    y_true_sorted = y_true[sorted_indices]
+    y_scores_sorted = y_scores[sorted_indices]
+    
+    # Calculate TPR and FPR for each threshold
+    thresholds = np.unique(y_scores_sorted)
+    thresholds = np.append(thresholds, [1.0, 0.0])  # Add endpoints
+    thresholds = np.sort(thresholds)[::-1]
+    
+    tpr = []
+    fpr = []
+    
+    for threshold in thresholds:
+        y_pred = (y_scores_sorted >= threshold).astype(int)
+        
+        tp = np.sum((y_pred == 1) & (y_true_sorted == 1))
+        fp = np.sum((y_pred == 1) & (y_true_sorted == 0))
+        tn = np.sum((y_pred == 0) & (y_true_sorted == 0))
+        fn = np.sum((y_pred == 0) & (y_true_sorted == 1))
+        
+        tpr_val = tp / (tp + fn) if (tp + fn) > 0 else 0
+        fpr_val = fp / (fp + tn) if (fp + tn) > 0 else 0
+        
+        tpr.append(tpr_val)
+        fpr.append(fpr_val)
+    
+    # Calculate AUC using trapezoidal rule
+    auc = np.trapz(tpr, fpr)
+    
+    return np.array(fpr), np.array(tpr), auc
+
+# Get probabilities for all data points
+final_probs_all = sigmoid(w * X + b)
+fpr, tpr, auc_score = calculate_roc_curve(y, final_probs_all)
+
+print(f"AUC Score: {auc_score:.3f}")
+print("  AUC = 1.0: Perfect classifier")
+print("  AUC = 0.5: Random classifier (no better than guessing)")
+print("  AUC > 0.7: Good classifier")
+print()
+
+# Plot ROC curve
+plot_roc_curve(fpr, tpr, auc_score, title="ROC Curve for Logistic Regression Model")
+
 # Why Logistic Regression is Better
-print("=== 3.12 Why Logistic Regression is Better ===")
+print("=== 3.13 Why Logistic Regression is Better ===")
 print("✅ Smooth learning")
 print("✅ Probability output")
 print("✅ Stable training")
@@ -117,6 +173,7 @@ print()
 
 # Exercises
 print("=== Exercises ===")
-print("Exercise 1: Try different thresholds (0.7, 0.3)")
-print("Exercise 2: Add more data points and retrain")
+print("Exercise 1: Try different thresholds (0.7, 0.3) and observe ROC curve changes")
+print("Exercise 2: Add more data points and retrain, compare AUC scores")
 print("Exercise 3: Why is sigmoid better than step function for learning?")
+print("Exercise 4: What does an AUC of 0.8 mean in practical terms?")

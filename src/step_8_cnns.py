@@ -15,7 +15,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from plotting import plot_learning_curve
+from plotting import plot_learning_curve, plot_model_architecture
 
 # Check if PyTorch is available
 try:
@@ -170,6 +170,17 @@ print()
 # Count parameters
 total_params = sum(p.numel() for p in model.parameters())
 print(f"Total parameters: {total_params}")
+print()
+
+# Visualize model architecture
+print("=== 8.5.1 Model Architecture Diagram ===")
+plot_model_architecture(model, input_shape="(batch, 1, 28, 28)", 
+                       title="SimpleCNN Architecture")
+print("  This diagram shows the flow of data through the network")
+print("  - Input: Images (batch, channels, height, width)")
+print("  - Conv layers: Extract features")
+print("  - Pool layers: Reduce size")
+print("  - FC layers: Final classification")
 print()
 
 # 8.6 Understanding CNN Components

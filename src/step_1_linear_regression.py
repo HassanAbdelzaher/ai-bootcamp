@@ -5,7 +5,7 @@ Tools: Python + NumPy + Matplotlib
 """
 
 import numpy as np
-from plotting import plot_data_scatter, plot_prediction_line, plot_learning_curve, plot_weight_evolution, plot_error_distribution
+from plotting import plot_data_scatter, plot_prediction_line, plot_learning_curve, plot_weight_evolution, plot_error_distribution, plot_train_test_split
 
 # ============================================================================
 # 1.3 Dataset Example
@@ -216,10 +216,72 @@ print("  Points close to diagonal line = good predictions")
 print()
 
 # ============================================================================
-# 1.11 Make Predictions
+# 1.11 Train/Test Split (Important Practice)
+# ============================================================================
+# In real projects, we split data into training and testing sets.
+# This helps us evaluate how well our model generalizes to new data.
+print("=== 1.11 Train/Test Split Visualization ===")
+print("Why split data?")
+print("  - Training set: Used to learn the model")
+print("  - Test set: Used to evaluate performance on unseen data")
+print("  - Prevents overfitting (memorizing training data)")
+print()
+
+# Create a larger dataset for demonstration
+X_full = np.array([1, 2, 3, 4, 5, 6, 7, 8], dtype=float)
+y_full = np.array([50, 60, 70, 80, 90, 100, 110, 120], dtype=float)
+
+# Split: 75% train, 25% test
+split_idx = int(len(X_full) * 0.75)
+X_train = X_full[:split_idx]
+y_train = y_full[:split_idx]
+X_test = X_full[split_idx:]
+y_test = y_full[split_idx:]
+
+print(f"Training set: {len(X_train)} samples")
+print(f"Test set: {len(X_test)} samples")
+print()
+
+# Train model on training set only
+w_train = 0.0
+b_train = 0.0
+lr = 0.01
+
+for epoch in range(1000):
+    y_pred_train = w_train * X_train + b_train
+    dw = np.mean((y_pred_train - y_train) * X_train)
+    db = np.mean(y_pred_train - y_train)
+    w_train -= lr * dw
+    b_train -= lr * db
+
+# Make predictions on both sets
+y_pred_train_final = w_train * X_train + b_train
+y_pred_test_final = w_train * X_test + b_test
+
+# Calculate errors
+train_error = np.mean((y_pred_train_final - y_train) ** 2)
+test_error = np.mean((y_pred_test_final - y_test) ** 2)
+
+print(f"Training MSE: {train_error:.2f}")
+print(f"Test MSE: {test_error:.2f}")
+print("  Good models have similar train and test errors")
+print()
+
+# Visualize train/test split
+plot_train_test_split(X_train, y_train, X_test, y_test, 
+                     y_pred_train_final, y_pred_test_final,
+                     xlabel="Study Hours", ylabel="Exam Score",
+                     title="Train/Test Split Visualization")
+print("  Blue circles = Training data (used for learning)")
+print("  Red squares = Test data (used for evaluation)")
+print("  Dashed lines = Model predictions")
+print()
+
+# ============================================================================
+# 1.12 Make Predictions
 # ============================================================================
 # Now we can use our trained model to predict scores for new students!
-print("=== 1.11 Make Predictions ===")
+print("=== 1.12 Make Predictions ===")
 
 # Predict for a new student who studied 5 hours
 # Use the learned equation: score = w * hours + b
