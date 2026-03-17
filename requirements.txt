@@ -18,6 +18,10 @@ scikit-learn>=0.24.0
 seaborn>=0.11.0
 networkx>=2.6.0
 
-# AI Agent SDK (for ai_agent.py)
+# AI Agent SDK (for ai_agent.py and mssql_admin_agent.py)
 claude-agent-sdk
 anyio
+
+# MSSQL connectivity (for mssql_admin_agent.py)
+# Requires ODBC Driver 18 for SQL Server installed on the OS
+pyodbc
